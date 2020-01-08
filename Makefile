@@ -1,12 +1,18 @@
+CC      =   $(CROSS_COMPILE)gcc
+CPP     =   $(CROSS_COMPILE)cpp
+AR      =   $(CROSS_COMPILE)ar
+LD      =   $(CROSS_COMPILE)ld
+OBJCOPY     =   $(CROSS_COMPILE)objcopy
+
 zero_stage_boot.elf: start.o test.o
-	~/nixon/bin/riscv64-unknown-linux-gnu-ld -Ttest.lds $^ -o $@
-	~/nixon/bin/riscv64-unknown-linux-gnu-objcopy -O binary $@ zero_stage_boot.bin
+	$(LD) -Ttest.lds $^ -o $@
+	$(OBJCOPY) -O binary $@ zero_stage_boot.bin
 
 test.o: test.c
-	~/nixon/bin/riscv64-unknown-linux-gnu-gcc -mcmodel=medany -g -O0 -c $^
+	$(CC) -mcmodel=medany -g -O0 -c $^
 
 start.o: start.S
-	~/nixon/bin/riscv64-unknown-linux-gnu-gcc -g -O0 -c $^
+	$(CC) -g -O0 -c $^
 
 clean:
 	-rm -rf test *.o *.bin *.elf 123

@@ -4,15 +4,15 @@ AR      =   $(CROSS_COMPILE)ar
 LD      =   $(CROSS_COMPILE)ld
 OBJCOPY     =   $(CROSS_COMPILE)objcopy
 
-zero_stage_boot.elf: start.o test.o
-	$(LD) -Ttest.lds $^ -o $@
-	$(OBJCOPY) -O binary $@ zero_stage_boot.bin
+main.elf: start.o main.o
+	$(LD) -Tlink.lds $^ -o $@
+	$(OBJCOPY) -O binary $@ main.bin
 
-test.o: test.c
-	$(CC) -mcmodel=medany -g -O0 -c $^
+main.o: main.c
+	$(CC) -mcmodel=medany -g -c $^
 
 start.o: start.S
-	$(CC) -g -O0 -c $^
+	$(CC) -g -c $^
 
 clean:
-	-rm -rf test *.o *.bin *.elf 123
+	-rm -rf *.o *.bin *.elf

@@ -1,10 +1,8 @@
 .global entry
 entry:
 	la sp, stacks
-	call setup_pmp
-	call set_cpu_regs
-	call setup_dtb_addr
-	jr zero
+	call init_cpu
+	call setup_features
 	ebreak
 
 .bss

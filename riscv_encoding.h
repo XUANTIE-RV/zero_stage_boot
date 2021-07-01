@@ -10,6 +10,7 @@
 #define CSR_MRMR         0x7c6
 #define CSR_MRVBR        0x7c7
 #define CSR_MCOUNTERWEN  0x7c9
+#define CSR_MSMPR	 0x7f3
 
 /* clang-format off */
 #define MSTATUS_SIE			_UL(0x00000002)
@@ -335,6 +336,7 @@
 #define CSR_MARCHID			0xf12
 #define CSR_MIMPID			0xf13
 #define CSR_MHARTID			0xf14
+#define CSR_MCPUID			0xfc0
 #define CSR_CYCLEH			0xc80
 #define CSR_TIMEH			0xc81
 #define CSR_INSTRETH			0xc82

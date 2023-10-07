@@ -5,6 +5,8 @@
 #define CSR_MHCR         0x7c1
 #define CSR_MCCR2        0x7c3
 #define CSR_MHINT        0x7c5
+#define CSR_MHINT2       0x7cc
+#define CSR_MHINT3       0x7cd
 #define CSR_MXSTATUS     0x7c0
 #define CSR_PLIC_BASE    0xfc1
 #define CSR_MRMR         0x7c6
@@ -236,6 +238,7 @@
 #define CSR_MIE				0x304
 #define CSR_MTVEC			0x305
 #define CSR_MCOUNTEREN			0x306
+#define CSR_MENVCFG			0x30a
 #define CSR_MSTATUSH			0x310
 #define CSR_MSCRATCH			0x340
 #define CSR_MEPC			0x341

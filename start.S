@@ -4,7 +4,18 @@
 #define BOOT_STATUS_RELOCATE_DONE	1
 
 entry:
-	csrr t0, mhartid
+        /*
+         * Clear L1 cache & BTB & BHT ...
+         */
+        li      t0, 0x70013
+        csrw    0x7c2, t0
+
+	/*
+	 * Only one core could do relocate
+	 */
+	lla     t0, _relocate_lottery
+	li      t1, 1
+	amoadd.w t0, t1, (t0)
 	bnez t0, _wait_relocate_copy_done
 	lla	t0, _load_start
 	lla	t1, entry

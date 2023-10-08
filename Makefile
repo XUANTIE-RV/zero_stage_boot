@@ -18,4 +18,4 @@ start.o: start.S
 	$(CC) ${CFLAGS} -g -c $^
 
 clean:
-	-rm -rf *.o *.bin *.elf
+	-rm -rf *.o *.bin *.elf *.asm

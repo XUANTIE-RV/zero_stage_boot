@@ -1,14 +1,6 @@
 #include "riscv_asm.h"
 #include "riscv_encoding.h"
 
-void init_cpu(void)
-{
-	/*
-         * Invalidate & Clear IBP BTB BHT ICache & DCache
-	 */
-	csr_write(CSR_MCOR, 0x70013);
-}
-
 void setup_features(void)
 {
 	unsigned int i, cpu_type, cpu_ver;
@@ -26,14 +18,39 @@ void setup_features(void)
 	 */
 	switch (cpu_type) {
 	case 0x3:
-		if (cpu_ver >= 0x1180 && cpu_ver <= 0x123f) {
+		if (cpu_ver >= 0x1080 && cpu_ver <= 0x10bf) { //1.2.0~1.2.x
+			csr_write(CSR_MCCR2, 0xe0010009);
+			csr_write(CSR_MXSTATUS, 0x638000);
+			csr_write(CSR_MHINT, 0x6e30c);
+			csr_write(CSR_MHCR, 0x1ff);
+		} else if (cpu_ver >= 0x1100 && cpu_ver <= 0x113f) { //1.4.0~1.4.x
+			csr_write(CSR_MSMPR, 0x1);
+			csr_write(CSR_MCCR2, 0xe2490009);
+			csr_write(CSR_MXSTATUS, 0x638000);
+			csr_write(CSR_MHINT, 0x16e30c);
+			csr_write(CSR_MHCR, 0x1ff);
+		} else if (cpu_ver >= 0x1140 && cpu_ver <= 0x117f) { //1.5.0~1.5.x
+			csr_write(CSR_MSMPR, 0x1);
+			csr_write(CSR_MCCR2, 0xe2490009);
+			csr_write(CSR_MXSTATUS, 0x638000);
+			csr_write(CSR_MHINT, 0xe6e30c);
+			csr_write(CSR_MHINT2, 0x180);
+			csr_write(CSR_MHCR, 0x1ff);
+		} else if (cpu_ver >= 0x1180 && cpu_ver <= 0x1183) { //1.6.0~1.6.3
+			csr_write(CSR_MSMPR, 0x1);
+			csr_write(CSR_MCCR2, 0xe249000b);
+			csr_write(CSR_MXSTATUS, 0x638000);
+			csr_write(CSR_MHINT, 0x1ee30c);
+			csr_write(CSR_MHINT2, 0x180);
+			csr_write(CSR_MHCR, 0x1ff);
+		} else if (cpu_ver >= 0x1184 && cpu_ver <= 0x123f) { //1.6.4~1.8.x
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xe249000b);
 			csr_write(CSR_MXSTATUS, 0x638000);
 			csr_write(CSR_MHINT, 0x1ee30c);
 			csr_write(CSR_MHINT2, 0x180);
 			csr_write(CSR_MHCR, 0x11ff);
-		} else if (cpu_ver >= 0x2000 && cpu_ver <= 0xffff) {
+		} else if (cpu_ver >= 0x2000 && cpu_ver <= 0xffff) { //2.0.0~
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xe249000b);
 			csr_write(CSR_MXSTATUS, 0x438000);
@@ -54,13 +71,13 @@ void setup_features(void)
 		}
 		break;
 	case 0x5:
-		if (cpu_ver >= 0x0000 && cpu_ver <= 0x0007) {
+		if (cpu_ver >= 0x0000 && cpu_ver <= 0x0007) { //0.0.0~0.0.7
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xe0420008);
 			csr_write(CSR_MXSTATUS, 0x638000);
 			csr_write(CSR_MHINT, 0x2c50c);
 			csr_write(CSR_MHCR, 0x11ff);
-		} else if (cpu_ver >= 0x0040 && cpu_ver <= 0xffff) {
+		} else if (cpu_ver >= 0x0040 && cpu_ver <= 0xffff) { //0.1.0~
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xa042000a);
 			csr_write(CSR_MXSTATUS, 0x438000);

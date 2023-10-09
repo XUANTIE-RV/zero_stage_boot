@@ -9,6 +9,9 @@ entry:
 	li      t0, 0x70013
 	csrw    0x7c2, t0
 
+	/*
+	 * Enable cache coherency
+	 */
 	li	t0, 1
 	csrw	msmpr,t0
 

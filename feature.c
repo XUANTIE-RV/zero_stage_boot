@@ -63,7 +63,7 @@ void setup_features(void)
 		} else if (cpu_ver >= 0x0040 && cpu_ver <= 0xffff) {
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xa042000a);
-			csr_write(CSR_MXSTATUS, 0x638000);
+			csr_write(CSR_MXSTATUS, 0x438000);
 			csr_write(CSR_MHINT, 0x21aa10c);
 			csr_write(CSR_MHCR, 0x10011ff);
 		} else {

@@ -3,11 +3,14 @@
 #define BOOT_STATUS_RELOCATE_DONE	1
 
 entry:
-        /*
-         * Clear L1 cache & BTB & BHT ...
-         */
-        li      t0, 0x70013
-        csrw    0x7c2, t0
+	/*
+	 * Clear L1 cache & BTB & BHT ...
+	 */
+	li      t0, 0x70013
+	csrw    0x7c2, t0
+
+	li	t0, 1
+	csrw	msmpr,t0
 
 	/*
 	 * Only one core could do relocate
@@ -57,7 +60,6 @@ _relocate_copy_done:
 	/*
 	 * Call C routine
 	 */
-	call	init_cpu
 	call	setup_features
 	call	next_stage
 

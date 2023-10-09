@@ -1,14 +1,6 @@
 #include "riscv_asm.h"
 #include "riscv_encoding.h"
 
-void init_cpu(void)
-{
-	/*
-         * Invalidate & Clear IBP BTB BHT ICache & DCache
-	 */
-	csr_write(CSR_MCOR, 0x70013);
-}
-
 void setup_features(void)
 {
 	unsigned int i, cpu_type, cpu_ver;

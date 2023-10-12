@@ -1,1 +1,11 @@
-CROSS_COMPILE=/home/guoren/source/kvm/install_toolchain/bin/riscv64-unknown-linux-gnu- make
+= Introduction
+
+The zero stage boot is the T-HEAD processor init code before opensbi. Before zero_stage_boot, SoC vendors must prepare ddr_init and CPU reset procedures. All harts would get into zero_stage_boot together, and the first one would duty to relocate GOT & offset variable, and others wait. Every hart would init its CSRs by their CPUID versions separately, allowing different harts to work together, e.g., 4*c908 + 2*c910. You could compile standard opensbi and Linux kernel binaries from open-source repositories, all compatible with T-HEAD processors. Here is the simple boot flow:
+
+....
+[Jtag gdb init script] -> [zero_stage_boot] -> [opensbi] -> [Linux]
+....
+
+= Compile
+
+CROSS_COMPILE=riscv64-unknown-linux-gnu- make

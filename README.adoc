@@ -9,3 +9,99 @@ The zero stage boot is the T-HEAD processor init code before opensbi. Before zer
 = Compile
 
 CROSS_COMPILE=riscv64-unknown-linux-gnu- make
+
+= DTS Example
+
+The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
+"riscv,clint0", "thead,c900-plic", compatible strings.
+
+....
+        cpus {
+                #address-cells = <1>;
+                #size-cells = <0>;
+                timebase-frequency = <3000000>;
+                cpu@0 {
+                        device_type = "cpu";
+                        reg = <0>;
+                        status = "okay";
+                        compatible = "riscv";
+                        riscv,isa = "rv64ima";
+                        cpu0_intc: interrupt-controller {
+                                #interrupt-cells = <1>;
+                                compatible = "riscv,cpu-intc";
+                                interrupt-controller;
+                        };
+                };
+                cpu@1 {
+                        device_type = "cpu";
+                        reg = <1>;
+                        status = "okay";
+                        compatible = "riscv";
+                        riscv,isa = "rv64ima";
+                        cpu1_intc: interrupt-controller {
+                                #interrupt-cells = <1>;
+                                compatible = "riscv,cpu-intc";
+                                interrupt-controller;
+                        };
+                };
+                cpu@2 {
+                        device_type = "cpu";
+                        reg = <2>;
+                        status = "okay";
+                        compatible = "riscv";
+                        riscv,isa = "rv64ima";
+                        cpu2_intc: interrupt-controller {
+                                #interrupt-cells = <1>;
+                                compatible = "riscv,cpu-intc";
+                                interrupt-controller;
+                        };
+                };
+                cpu@3 {
+                        device_type = "cpu";
+                        reg = <3>;
+                        status = "okay";
+                        compatible = "riscv";
+                        riscv,isa = "rv64ima";
+                        cpu3_intc: interrupt-controller {
+                                #interrupt-cells = <1>;
+                                compatible = "riscv,cpu-intc";
+                                interrupt-controller;
+                        };
+                };
+        };
+
+        soc {
+                #address-cells = <2>;
+                #size-cells = <2>;
+                compatible = "simple-bus";
+                ranges;
+
+                clint0: clint@ffdc000000 {
+                        compatible = "riscv,clint0";
+                        interrupts-extended = <
+                                &cpu0_intc  3 &cpu0_intc  7
+                                &cpu1_intc  3 &cpu1_intc  7
+                                &cpu2_intc  3 &cpu2_intc  7
+                                &cpu3_intc  3 &cpu3_intc  7
+                                &cpu4_intc  3 &cpu4_intc  7
+                                >;
+                        reg = <0xff 0xdc000000 0x0 0x04000000>;
+                };
+
+                intc: interrupt-controller@ffd8000000 {
+                        #interrupt-cells = <1>;
+                        compatible = "thead,c900-plic";
+                        interrupt-controller;
+                        interrupts-extended = <
+                                &cpu0_intc  0xffffffff &cpu0_intc  9
+                                &cpu1_intc  0xffffffff &cpu1_intc  9
+                                &cpu2_intc  0xffffffff &cpu2_intc  9
+                                &cpu3_intc  0xffffffff &cpu3_intc  9
+                                >;
+                        reg = <0xff 0xd8000000 0x0 0x04000000>;
+                        reg-names = "control";
+                        riscv,max-priority = <7>;
+                        riscv,ndev = <80>;
+                };
+        }
+....

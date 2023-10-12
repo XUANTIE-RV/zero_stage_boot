@@ -45,10 +45,10 @@ entry:
 	/*
 	 * Set relocate done flag, let other harts boot.
 	 */
+	fence	rw, rw
 	li	t0, BOOT_STATUS_RELOCATE_DONE
 	lla	t1, _boot_status
 	sd	t0, 0(t1)
-	fence	rw, rw
 
 _relocate_copy_done:
 	/*

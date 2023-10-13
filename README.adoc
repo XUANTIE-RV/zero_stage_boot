@@ -1,12 +1,15 @@
 = Introduction
 
-The zero stage boot is the T-HEAD processor init code before opensbi. Before zero_stage_boot, SoC vendors must prepare ddr_init and CPU reset procedures. All harts would get into zero_stage_boot together, and the first one would duty to relocate GOT & offset variable, and others wait. Every hart would init its CSRs by their CPUID versions separately, allowing different harts to work together, e.g., 4*c908 + 2*c910. You could compile standard opensbi and Linux kernel binaries from open-source repositories, all compatible with T-HEAD processors. Here is the simple boot flow:
+The zero stage boot is the XuanTie processor init code before opensbi. Before zero_stage_boot, SoC vendors must prepare ddr_init and CPU reset procedures. All harts would get into zero_stage_boot together, and the first one would duty to relocate GOT & offset variable, and others wait. Every hart would init its CSRs by their CPUID versions separately, allowing different harts to work together, e.g., 4*c908 + 2*c910. You could compile standard opensbi and Linux kernel binaries from open-source repositories, all compatible with XuanTie processors. Here is the simple boot flow:
 
 ....
-[Jtag gdb init script] -> [zero_stage_boot] -> [opensbi] -> [Linux]
+[Jtag gdbinit] -> [zero_stage_boot] -> [opensbi] -> [Linux]
+
+opensbi: https://github.com/riscv-software-src/opensbi
+Linux:   https://kernel.org/
 ....
 
-= Compile
+= Compile zero_stage_boot
 
 CROSS_COMPILE=riscv64-unknown-linux-gnu- make
 
@@ -16,6 +19,18 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 "riscv,clint0", "thead,c900-plic", compatible strings.
 
 ....
+/dts-v1/;
+/ {
+	model = "Test Sample";
+	compatible = "test,sample";
+	#address-cells = <2>;
+	#size-cells = <2>;
+
+	memory@60000000 {
+		device_type = "memory";
+		reg = <0x0 0x60000000 0x1 0x00000000>;
+	};
+
         cpus {
                 #address-cells = <1>;
                 #size-cells = <0>;
@@ -83,7 +98,6 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
                                 &cpu1_intc  3 &cpu1_intc  7
                                 &cpu2_intc  3 &cpu2_intc  7
                                 &cpu3_intc  3 &cpu3_intc  7
-                                &cpu4_intc  3 &cpu4_intc  7
                                 >;
                         reg = <0xff 0xdc000000 0x0 0x04000000>;
                 };
@@ -103,5 +117,68 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
                         riscv,max-priority = <7>;
                         riscv,ndev = <80>;
                 };
-        }
+        };
+};
 ....
+
+= CPU gdbinit script
+
+....
+# Set gdb environment
+set confirm off
+set height  0
+
+# memory layout
+set $opensbi_addr = 0x60000000
+set $vmlinux_addr = $opensbi_addr + 0x00400000
+set $rootfs_addr  = $opensbi_addr + 0x04000000
+set $dtb_addr     = $rootfs_addr  - 0x00100000
+set $zsb_addr     = $rootfs_addr  - 0x00008000
+set $dyninfo_addr = $rootfs_addr  - 0x40
+
+# Load rootfs & kernel
+restore zero_stage_boot.bin binary          $zsb_addr
+restore <preceding dts example>.dtb binary  $dtb_addr
+restore fw_dynamic.bin binary               $opensbi_addr
+restore Image binary                        $vmlinux_addr
+
+# Set opensbi dynamic info param
+set *(unsigned long *)($dyninfo_addr)      = 0x4942534f
+set *(unsigned long *)($dyninfo_addr + 8)  = 2
+set *(unsigned long *)($dyninfo_addr + 16) = $vmlinux_addr
+set *(unsigned long *)($dyninfo_addr + 24) = 1
+set *(unsigned long *)($dyninfo_addr + 32) = 0
+set *(unsigned long *)($dyninfo_addr + 40) = -1
+
+# Set all harts reset address
+set *0x18030010 = $zsb_addr
+set *0x18030018 = $zsb_addr
+set *0x18030020 = $zsb_addr
+set *0x18030028 = $zsb_addr
+set $pc         = $zsb_addr
+
+# Release all harts from reset
+set *0x18030000 = 0x7f
+....
+
+= Run
+
+Start Jtag Server, then use gdb connect the Jtag Server.
+
+....
+riscv64-elf-gdb -ex "tar remote <Jtag Server ip:port>" -x <your soc gdbinit> -x <preceding cpu gdbinit> -ex "c"
+....
+
+Use `ctrl+c` to get into the gdb shell.
+
+....
+source vmlinux
+source gdbmarcos.txt
+dmesg
+....
+
+gdbmacros.txt:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/kdump/gdbmacros.txt
+
+vmlinux: The Linux kernel ELF file

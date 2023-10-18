@@ -1,3 +1,5 @@
+#include "riscv_encoding.h"
+
 .global _load_start
 
 #define BOOT_STATUS_RELOCATE_DONE	1
@@ -7,13 +9,13 @@ entry:
 	 * Clear L1 cache & BTB & BHT ...
 	 */
 	li      t0, 0x70013
-	csrw    0x7c2, t0
+	csrw    CSR_MCOR, t0
 
 	/*
 	 * Enable cache coherency
 	 */
 	li	t0, 1
-	csrw	msmpr,t0
+	csrw	CSR_MSMPR, t0
 
 	/*
 	 * Only one core could do relocate

@@ -153,8 +153,8 @@ set *(unsigned long *)($dyninfo_addr + 40) = -1
 # Set all harts reset address
 set *0x18030010 = $zsb_addr
 set *0x18030018 = $zsb_addr
-set *0x18030020 = $zsb_addr
 set *0x18030028 = $zsb_addr
+set *0x18030030 = $zsb_addr
 set $pc         = $zsb_addr
 
 # Release all harts from reset

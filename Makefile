@@ -4,7 +4,7 @@ AR      =   $(CROSS_COMPILE)ar
 LD      =   $(CROSS_COMPILE)ld
 OBJCOPY     =   $(CROSS_COMPILE)objcopy
 OBJDUMP     =   $(CROSS_COMPILE)objdump
-CFLAGS = -fPIC
+CFLAGS = -fPIC -fno-stack-protector
 TARGET = zero_stage_boot
 ${TARGET}.elf: start.o feature.o jump.o
 	$(LD) -Tlink.lds $^ -o $@

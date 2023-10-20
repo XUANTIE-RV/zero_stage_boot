@@ -179,7 +179,7 @@ riscv64-elf-gdb -ex "tar remote <Jtag Server ip:port>" -x <your soc gdbinit> -x 
 Use `ctrl+c` to get into the gdb shell.
 
 ....
-source vmlinux
+file vmlinux
 source gdbmarcos.txt
 dmesg
 ....

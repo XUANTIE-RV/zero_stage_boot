@@ -26,7 +26,7 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 	#address-cells = <2>;
 	#size-cells = <2>;
 
-	memory@0 {
+	memory@60000000 {
 		device_type = "memory";
 		reg = <0x0 0x60000000 0x1 0x00000000>;
 	};
@@ -143,7 +143,7 @@ set $dtb_addr     = $rootfs_addr  - 0x00100000
 set $zsb_addr     = $rootfs_addr  - 0x00008000
 set $dyninfo_addr = $rootfs_addr  - 0x40
 
-# Load rootfs & kernel
+# Load kernel
 restore zero_stage_boot.bin binary          $zsb_addr
 restore <preceding dts example>.dtb binary  $dtb_addr
 restore fw_dynamic.bin binary               $opensbi_addr

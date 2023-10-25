@@ -41,8 +41,9 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 			status = "okay";
 			compatible = "riscv";
 			riscv,isa = "rv64ima";
-			mmu-type = "riscv,sv48";
+			mmu-type = "riscv,sv57";
 			cpu0_intc: interrupt-controller {
+				#address-cells = <0>;
 				#interrupt-cells = <1>;
 				compatible = "riscv,cpu-intc";
 				interrupt-controller;
@@ -54,8 +55,9 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 			status = "okay";
 			compatible = "riscv";
 			riscv,isa = "rv64ima";
-			mmu-type = "riscv,sv48";
+			mmu-type = "riscv,sv57";
 			cpu1_intc: interrupt-controller {
+				#address-cells = <0>;
 				#interrupt-cells = <1>;
 				compatible = "riscv,cpu-intc";
 				interrupt-controller;
@@ -67,8 +69,9 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 			status = "okay";
 			compatible = "riscv";
 			riscv,isa = "rv64ima";
-			mmu-type = "riscv,sv48";
+			mmu-type = "riscv,sv57";
 			cpu2_intc: interrupt-controller {
+				#address-cells = <0>;
 				#interrupt-cells = <1>;
 				compatible = "riscv,cpu-intc";
 				interrupt-controller;
@@ -80,8 +83,9 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 			status = "okay";
 			compatible = "riscv";
 			riscv,isa = "rv64ima";
-			mmu-type = "riscv,sv48";
+			mmu-type = "riscv,sv57";
 			cpu3_intc: interrupt-controller {
+				#address-cells = <0>;
 				#interrupt-cells = <1>;
 				compatible = "riscv,cpu-intc";
 				interrupt-controller;
@@ -110,8 +114,10 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 
 		intc: interrupt-controller@8000000 {
 			#address-cells = <0>;
-			#interrupt-cells = <2>;
+			#interrupt-cells = <1>;
 			compatible = "thead,c900-plic";
+			reg = <0x0 0x08000000 0x0 0x04000000>;
+			riscv,ndev = <80>;
 			interrupt-controller;
 			interrupts-extended = <
 				&cpu0_intc  0xffffffff &cpu0_intc  9
@@ -119,10 +125,6 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 				&cpu2_intc  0xffffffff &cpu2_intc  9
 				&cpu3_intc  0xffffffff &cpu3_intc  9
 				>;
-			reg = <0x0 0x08000000 0x0 0x04000000>;
-			reg-names = "control";
-			riscv,max-priority = <7>;
-			riscv,ndev = <80>;
 		};
 	};
 };

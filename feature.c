@@ -29,7 +29,7 @@ void setup_features(void)
 			csr_write(CSR_MXSTATUS, 0x638000);
 			csr_write(CSR_MHINT, 0x66e30c);
 			csr_write(CSR_MHCR, 0x17f);
-			csr_write(CSR_MHINT2, 0x20000);
+			csr_write(CSR_MHINT2, 0x420000);
 			csr_write(CSR_MHINT4, 0x410);
 		} else if (cpu_ver >= 0x1100 && cpu_ver <= 0x113f) { //1.4.0~1.4.x
 			csr_write(CSR_MSMPR, 0x1);

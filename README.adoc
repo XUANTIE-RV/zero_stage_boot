@@ -173,7 +173,7 @@ set *0x18030000 = 0x7f
 
 = Run
 
-Start Jtag Server, then use gdb connect the Jtag Server.
+Start Jtag Server with local-semihosting mode(opensbi requirements), then use gdb connect the Jtag Server.
 
 ....
 riscv64-elf-gdb -ex "tar remote <Jtag Server ip:port>" -x <your soc gdbinit> -x <preceding cpu gdbinit> -ex "c"

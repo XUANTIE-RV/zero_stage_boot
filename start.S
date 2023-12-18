@@ -1,3 +1,4 @@
+#include "riscv_asm.h"
 #include "riscv_encoding.h"
 
 .global _load_start
@@ -29,9 +30,9 @@ entry:
 	 * Calculate current load_start
 	 */
 	lla	t0, _load_start
-	ld 	t2, 0(t0)
+	REG_L  t2, 0(t0)
 	lla	t1, entry
-	sd	t1, 0(t0)
+	REG_S	t1, 0(t0)
 
 	/*
 	 * Relocate GOT table
@@ -40,9 +41,9 @@ entry:
 	 */
 	sub	t2, t1, t2
 	lla	t0, _GLOBAL_OFFSET_TABLE_
-	ld	t1, 8(t0)
+	REG_L	t1, 8(t0)
 	add	t1, t2, t1
-	sd	t1, 8(t0)
+	REG_S	t1, 8(t0)
 
 	/*
 	 * Set relocate done flag, let other harts boot.
@@ -50,7 +51,7 @@ entry:
 	fence	rw, rw
 	li	t0, BOOT_STATUS_RELOCATE_DONE
 	lla	t1, _boot_status
-	sd	t0, 0(t1)
+	REG_S	t0, 0(t1)
 
 _relocate_copy_done:
 	/*
@@ -76,7 +77,7 @@ _relocate_copy_done:
 _wait_relocate_copy_done:
 	li	t0, BOOT_STATUS_RELOCATE_DONE
 	lla	t1, _boot_status
-	ld	t1, 0(t1)
+	REG_L	t1, 0(t1)
 
 	/* Reduce the bus traffic so that boot hart may proceed faster */
 	nop
@@ -88,11 +89,11 @@ _wait_relocate_copy_done:
 	.align 8
 	.data
 _relocate_lottery:
-	.dword 0
+	RISCV_PTR 0
 _boot_status:
-	.dword 0
+	RISCV_PTR 0
 _load_start:
-	.dword _fw_start
+	RISCV_PTR _fw_start
 
 	.bss
 	.skip 0x4000

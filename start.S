@@ -41,9 +41,9 @@ entry:
 	 */
 	sub	t2, t1, t2
 	lla	t0, _GLOBAL_OFFSET_TABLE_
-	REG_L	t1, 8(t0)
+	REG_L	t1, REGBYTES(t0)
 	add	t1, t2, t1
-	REG_S	t1, 8(t0)
+	REG_S	t1, REGBYTES(t0)
 
 	/*
 	 * Set relocate done flag, let other harts boot.

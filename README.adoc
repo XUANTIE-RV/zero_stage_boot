@@ -144,6 +144,7 @@ set $rootfs_addr  = $opensbi_addr + 0x04000000
 set $dtb_addr     = $rootfs_addr  - 0x00100000
 set $zsb_addr     = $rootfs_addr  - 0x00008000
 set $dyninfo_addr = $rootfs_addr  - 0x40
+set $flag_addr    = $rootfs_addr  - 0x100
 
 # Load kernel
 restore zero_stage_boot.bin binary          $zsb_addr
@@ -158,6 +159,11 @@ set *(unsigned long *)($dyninfo_addr + 16) = $vmlinux_addr
 set *(unsigned long *)($dyninfo_addr + 24) = 1
 set *(unsigned long *)($dyninfo_addr + 32) = 0
 set *(unsigned long *)($dyninfo_addr + 40) = -1
+
+# Set boot flag for CPU functional setting
+# BIT[0]: Enable RV64XT32 by setting mxstatus.[63]=1
+# set *(unsigned int *)$flag_addr = 0x1
+set *(unsigned int *)$flag_addr = 0x0
 
 # Set all harts reset address
 set *0x18030010 = $zsb_addr

@@ -1,6 +1,20 @@
 #include "riscv_asm.h"
 #include "riscv_encoding.h"
 
+#define FLAG_RV64XT32	0x1
+
+extern unsigned long _load_start;
+
+static inline void setup_boot_flag(void)
+{
+#if __riscv_xlen == 64
+	unsigned int boot_flag;
+	boot_flag = *(unsigned int *)(_load_start + 0x00008000 - 0x100);
+	if (boot_flag & FLAG_RV64XT32)
+		csr_write(CSR_MXSTATUS, csr_read(CSR_MXSTATUS) | (1ULL << 63));
+#endif
+}
+
 void setup_features(void)
 {
 	unsigned int i, cpu_type, cpu_ver;
@@ -129,4 +143,6 @@ void setup_features(void)
 	default:
 		while(1);
 	}
+
+	setup_boot_flag();
 }

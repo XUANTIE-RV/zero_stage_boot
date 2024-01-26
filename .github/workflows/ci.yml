@@ -24,7 +24,7 @@ jobs:
           - name: gcc-12
             toolchain_tripe: riscv64-linux-gnu-
           - name: rv32-gcc
-            toolchain_tripe: riscv32-linux-gnu-
+            toolchain_tripe: riscv32-unknown-linux-gnu-
 
     runs-on: ubuntu-22.04
     env:

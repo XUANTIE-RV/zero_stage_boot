@@ -10,6 +10,8 @@ on:
 env:
   xuetie_toolchain: https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1695643844189
   toolchain_file_name: Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.6.2-20230916.tar.gz
+  rv32_toolchain: https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2023.12.20
+  rv32_toolchain_file_name: riscv32-glibc-ubuntu-22.04-gcc-nightly-2023.12.20-nightly.tar.gz
 
 jobs:
   kernel:
@@ -21,6 +23,8 @@ jobs:
             toolchain_tripe: riscv64-unknown-linux-gnu-
           - name: gcc-12
             toolchain_tripe: riscv64-linux-gnu-
+          - name: rv32-gcc
+            toolchain_tripe: riscv32-unknown-linux-gnu-
 
     runs-on: ubuntu-22.04
     env:
@@ -46,10 +50,16 @@ jobs:
                 tar -xvf ${toolchain_file_name} -C /opt
                 rm -v ${toolchain_file_name}
               fi
+              if [ x"${{ matrix.name }}" = x"rv32-gcc" ]; then
+                wget ${rv32_toolchain}/${rv32_toolchain_file_name}
+                tar -xvf ${rv32_toolchain_file_name} -C /opt
+                rm -v ${rv32_toolchain_file_name}
+              fi
 
       - name: Compile
         run: |
               export PATH="/opt/Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.6.2/bin:$PATH"
+              export PATH="/opt/riscv/bin:$PATH"
               make -j$(nproc)
 
       - name: 'Upload Artifact'

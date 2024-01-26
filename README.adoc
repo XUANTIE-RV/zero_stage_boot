@@ -136,6 +136,7 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 # Set gdb environment
 set confirm off
 set height  0
+monitor set resume-bkpt-exception on
 
 # memory layout
 set $opensbi_addr = 0x60000000

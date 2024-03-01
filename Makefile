@@ -7,7 +7,7 @@ OBJDUMP     =   $(CROSS_COMPILE)objdump
 CFLAGS = -fPIC -fno-stack-protector
 TARGET = zero_stage_boot
 ${TARGET}.elf: start.o feature.o jump.o
-	$(LD) -Tlink.lds $^ -o $@
+	$(LD) $(CROSS_LDFLAGS) -Tlink.lds $^ -o $@
 	$(OBJCOPY) -O binary $@ ${TARGET}.bin
 	$(OBJDUMP) -D $@ > ${TARGET}.asm
 

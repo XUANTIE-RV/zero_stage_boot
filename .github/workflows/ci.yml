@@ -8,10 +8,15 @@ on:
     - cron: "0 2 * * *"
 
 env:
-  xuetie_toolchain: https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1695643844189
-  toolchain_file_name: Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.6.2-20230916.tar.gz
-  rv32_toolchain: https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2023.12.20
-  rv32_toolchain_file_name: riscv32-glibc-ubuntu-22.04-gcc-nightly-2023.12.20-nightly.tar.gz
+  xt64_toolchain: https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1695643844189
+  xt64_toolchain_file_name: Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.6.2-20230916.tar.gz
+  rv32_toolchain: https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2024.02.02
+  rv32_toolchain_file_name: riscv32-glibc-ubuntu-22.04-gcc-nightly-2024.02.02-nightly.tar.gz
+  rv64_toolchain: https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2024.02.02
+  rv64_toolchain_file_name: riscv64-glibc-ubuntu-22.04-gcc-nightly-2024.02.02-nightly.tar.gz
+  rv64ilp32_toolchain: https://github.com/ruyisdk/riscv-gnu-toolchain-rv64ilp32/releases/download/2024.02.23
+  rv64ilp32_toolchain_file_name: riscv64ilp32-elf-ubuntu-22.04-gcc-nightly-2024.02.23-nightly.tar.gz
+
 
 jobs:
   kernel:
@@ -22,15 +27,17 @@ jobs:
           - name: zsb-64lp64-xt
             toolchain_tripe: riscv64-unknown-linux-gnu-
           - name: zsb-64lp64
-            toolchain_tripe: riscv64-linux-gnu-
+            toolchain_tripe: riscv64-unknown-linux-gnu-
           - name: zsb-32ilp32
             toolchain_tripe: riscv32-unknown-linux-gnu-
           - name: linux-32ilp32
             toolchain_tripe: riscv32-unknown-linux-gnu-
           - name: linux-64lp64
-            toolchain_tripe: riscv64-linux-gnu-
+            toolchain_tripe: riscv64-unknown-linux-gnu-
+          - name: linux-64ilp32
+            toolchain_tripe: riscv64-unknown-elf-
           - name: opensbi-64lp64
-            toolchain_tripe: riscv64-linux-gnu-
+            toolchain_tripe: riscv64-unknown-linux-gnu-
           - name: opensbi-32ilp32
             toolchain_tripe: riscv32-unknown-linux-gnu-
 
@@ -42,11 +49,7 @@ jobs:
       - name: Install software
         run: |
               sudo apt update && \
-              sudo apt install -y g++-12-riscv64-linux-gnu build-essential
-              sudo update-alternatives --install \
-                  /usr/bin/riscv64-linux-gnu-gcc riscv64-gcc /usr/bin/riscv64-linux-gnu-gcc-12 10
-              sudo update-alternatives --install \
-                  /usr/bin/riscv64-linux-gnu-g++ riscv64-g++ /usr/bin/riscv64-linux-gnu-g++-12 10
+              sudo apt install -y build-essential
 
       - name: Checkout source
         uses: actions/checkout@v4
@@ -54,63 +57,107 @@ jobs:
       - name: Configure toolchains
         run: |
               if [ x"${{ matrix.name }}" = x"zsb-64lp64-xt" ]; then
-                wget ${xuetie_toolchain}/${toolchain_file_name}
-                tar -xvf ${toolchain_file_name} -C /opt
-                rm -v ${toolchain_file_name}
+                wget ${xt64_toolchain}/${xt64_toolchain_file_name}
+                tar -xvf ${xt64_toolchain_file_name} -C /opt
+                mv /opt/Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.6.2 /opt/riscv
+                rm -v ${xt64_toolchain_file_name}
               fi
               if [ x"${{ matrix.name }}" = x"zsb-32ilp32" ]; then
                 wget ${rv32_toolchain}/${rv32_toolchain_file_name}
                 tar -xvf ${rv32_toolchain_file_name} -C /opt
                 rm -v ${rv32_toolchain_file_name}
               fi
+              if [ x"${{ matrix.name }}" = x"zsb-64lp64" ]; then
+                wget ${rv64_toolchain}/${rv64_toolchain_file_name}
+                tar -xvf ${rv64_toolchain_file_name} -C /opt
+                rm -v ${rv64_toolchain_file_name}
+              fi
               if [ x"${{ matrix.name }}" = x"linux-32ilp32" ]; then
                 wget ${rv32_toolchain}/${rv32_toolchain_file_name}
                 tar -xvf ${rv32_toolchain_file_name} -C /opt
                 rm -v ${rv32_toolchain_file_name}
+              fi
+              if [ x"${{ matrix.name }}" = x"linux-64lp64" ]; then
+                wget ${rv64_toolchain}/${rv64_toolchain_file_name}
+                tar -xvf ${rv64_toolchain_file_name} -C /opt
+                rm -v ${rv64_toolchain_file_name}
+              fi
+              if [ x"${{ matrix.name }}" = x"linux-64ilp32" ]; then
+                wget ${rv64ilp32_toolchain}/${rv64ilp32_toolchain_file_name}
+                tar -xvf ${rv64ilp32_toolchain_file_name} -C /opt
+                rm -v ${rv64ilp32_toolchain_file_name}
+              fi
+              if [ x"${{ matrix.name }}" = x"opensbi-64lp64" ]; then
+                wget ${rv64_toolchain}/${rv64_toolchain_file_name}
+                tar -xvf ${rv64_toolchain_file_name} -C /opt
+                rm -v ${rv64_toolchain_file_name}
               fi
               if [ x"${{ matrix.name }}" = x"opensbi-32ilp32" ]; then
                 wget ${rv32_toolchain}/${rv32_toolchain_file_name}
                 tar -xvf ${rv32_toolchain_file_name} -C /opt
                 rm -v ${rv32_toolchain_file_name}
               fi
+
       - name: Compile
         run: |
               if [ x"${{ matrix.name }}" = x"zsb-64lp64-xt" ]; then
-                export PATH="/opt/Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.6.2/bin:$PATH"
+                export PATH="/opt/riscv/bin:$PATH"
                 make -j$(nproc)
-                tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf
+                tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf zero_stage_boot.bin
               fi
               if [ x"${{ matrix.name }}" = x"zsb-32ilp32" ]; then
                 export PATH="/opt/riscv/bin:$PATH"
                 make -j$(nproc)
-                tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf
+                tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf zero_stage_boot.bin
               fi
               if [ x"${{ matrix.name }}" = x"zsb-64lp64" ]; then
+                export PATH="/opt/riscv/bin:$PATH"
                 make -j$(nproc)
-                tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf
+                tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf zero_stage_boot.bin
+              fi
+              if [ x"${{ matrix.name }}" = x"linux-64ilp32" ]; then
+                export PATH="/opt/riscv/bin:$PATH"
+                git clone https://github.com/T-head-Semi/linux.git -b linux-6.6
+                cd linux
+                echo CONFIG_MMU_SV32=y >> arch/riscv/configs/64ilp32.config
+                make ARCH=riscv EXTRA_CFLAGS+=-g rv64ilp32_defconfig all INSTALL_MOD_PATH=../modules_install_sv32xt modules_install INSTALL_HDR_PATH=../headers_install_sv32xt headers_install -j$(nproc)
+                mv arch/riscv/boot/Image ../Image_sv32xt
+                mv vmlinux ../vmlinux_sv32xt
+                git checkout arch/riscv/configs/64ilp32.config
+                make ARCH=riscv EXTRA_CFLAGS+=-g rv64ilp32_defconfig all INSTALL_MOD_PATH=../modules_install modules_install INSTALL_HDR_PATH=../headers_install headers_install -j$(nproc)
+                mv arch/riscv/boot/Image ../
+                mv vmlinux ../
+                cp Documentation/admin-guide/kdump/gdbmacros.txt ../
+                git log --oneline -500 > ../git.log
+                cd -
+                tar czvf ${{ matrix.name }}.tar.gz Image vmlinux modules_install headers_install Image_sv32xt vmlinux_sv32xt modules_install_sv32xt headers_install_sv32xt git.log gdbmacros.txt
+              fi
+              if [ x"${{ matrix.name }}" = x"linux-64lp64" ]; then
+                export PATH="/opt/riscv/bin:$PATH"
+                git clone https://github.com/T-head-Semi/linux.git -b linux-6.6
+                cd linux
+                make ARCH=riscv EXTRA_CFLAGS+=-g defconfig all INSTALL_MOD_PATH=../modules_install modules_install INSTALL_HDR_PATH=../headers_install headers_install -j$(nproc)
+                mv arch/riscv/boot/Image ../
+                mv vmlinux ../
+                cp Documentation/admin-guide/kdump/gdbmacros.txt ../
+                git log --oneline -500 > ../git.log
+                cd -
+                tar czvf ${{ matrix.name }}.tar.gz Image vmlinux git.log modules_install headers_install gdbmacros.txt
               fi
               if [ x"${{ matrix.name }}" = x"linux-32ilp32" ]; then
                 export PATH="/opt/riscv/bin:$PATH"
                 git clone https://github.com/T-head-Semi/linux.git -b linux-6.6
                 cd linux
-                make ARCH=riscv EXTRA_CFLAGS+=-g rv32_defconfig all -j$(nproc)
-                mv arch/riscv/boot/Image ..
-                mv vmlinux ..
+                make ARCH=riscv EXTRA_CFLAGS+=-g rv32_defconfig all INSTALL_MOD_PATH=../modules_install modules_install INSTALL_HDR_PATH=../headers_install headers_install -j$(nproc)
+                mv arch/riscv/boot/Image ../
+                mv vmlinux ../
+                cp Documentation/admin-guide/kdump/gdbmacros.txt ../
                 git log --oneline -500 > ../git.log
                 cd -
-                tar czvf ${{ matrix.name }}.tar.gz Image vmlinux git.log
-              fi
-              if [ x"${{ matrix.name }}" = x"linux-64lp64" ]; then
-                git clone https://github.com/T-head-Semi/linux.git -b linux-6.6
-                cd linux
-                make ARCH=riscv EXTRA_CFLAGS+=-g defconfig all -j$(nproc)
-                mv arch/riscv/boot/Image ..
-                mv vmlinux ..
-                git log --oneline -500 > ../git.log
-                cd -
-                tar czvf ${{ matrix.name }}.tar.gz Image vmlinux git.log
+                tar czvf ${{ matrix.name }}.tar.gz Image vmlinux git.log modules_install headers_install gdbmacros.txt
               fi
               if [ x"${{ matrix.name }}" = x"opensbi-64lp64" ]; then
+                export PATH="/opt/riscv/bin:$PATH"
                 git clone https://github.com/riscv-software-src/opensbi.git
                 cd opensbi
                 git checkout dc0bb19bd2f969e8c2b8c55a71b3ae569eedfaf6
@@ -119,7 +166,7 @@ jobs:
                 mv build/platform/generic/firmware/fw_dynamic.elf ../
                 git log --oneline -500 > ../git.log
                 cd -
-                tar czvf ${{ matrix.name }}.tar.gz fw_dynamic.elf fw_dynamic.bin
+                tar czvf ${{ matrix.name }}.tar.gz fw_dynamic.elf fw_dynamic.bin git.log
               fi
               if [ x"${{ matrix.name }}" = x"opensbi-32ilp32" ]; then
                 export PATH="/opt/riscv/bin:$PATH"
@@ -131,7 +178,7 @@ jobs:
                 mv build/platform/generic/firmware/fw_dynamic.elf ../
                 git log --oneline -500 > ../git.log
                 cd -
-                tar czvf ${{ matrix.name }}.tar.gz fw_dynamic.elf fw_dynamic.bin
+                tar czvf ${{ matrix.name }}.tar.gz fw_dynamic.elf fw_dynamic.bin git.log
               fi
 
       - name: 'Upload Artifact'

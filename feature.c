@@ -133,7 +133,7 @@ void setup_features(void)
 		if (cpu_ver >= 0x0) {
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xA0420002);
-			csr_write(CSR_MXSTATUS, 0x438001);
+			csr_write(CSR_MXSTATUS, 0x438000);
 			csr_write(CSR_MHINT, 0x3A1AA10C);
 			csr_write(CSR_MHCR, 0x10011BF);
 		} else {

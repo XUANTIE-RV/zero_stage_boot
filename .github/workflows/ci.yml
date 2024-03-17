@@ -187,3 +187,10 @@ jobs:
           name: ${{ matrix.name }}.tar.gz
           path: ${{ matrix.name }}.tar.gz
           retention-days: 90
+
+      - name: 'Create release by tag'
+        uses: softprops/action-gh-release@v1
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        with:
+          files: ${{ matrix.name }}.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}

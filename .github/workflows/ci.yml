@@ -103,17 +103,26 @@ jobs:
               if [ x"${{ matrix.name }}" = x"zsb-64lp64-xt" ]; then
                 export PATH="/opt/riscv/bin:$PATH"
                 make -j$(nproc)
-                tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf zero_stage_boot.bin
+                git log --oneline -500 > git.log
+                echo "${{ matrix.name }}" >> zero_stage_boot.bin
+                git log --oneline -500 >> zero_stage_boot.bin
+                tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf zero_stage_boot.bin git.log
               fi
               if [ x"${{ matrix.name }}" = x"zsb-32ilp32" ]; then
                 export PATH="/opt/riscv/bin:$PATH"
                 make -j$(nproc)
-                tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf zero_stage_boot.bin
+                git log --oneline -500 > git.log
+                echo "${{ matrix.name }}" >> zero_stage_boot.bin
+                git log --oneline -500 >> zero_stage_boot.bin
+                tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf zero_stage_boot.bin git.log
               fi
               if [ x"${{ matrix.name }}" = x"zsb-64lp64" ]; then
                 export PATH="/opt/riscv/bin:$PATH"
                 make -j$(nproc)
-                tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf zero_stage_boot.bin
+                git log --oneline -500 > git.log
+                echo "${{ matrix.name }}" >> zero_stage_boot.bin
+                git log --oneline -500 >> zero_stage_boot.bin
+                tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf zero_stage_boot.bin git.log
               fi
               if [ x"${{ matrix.name }}" = x"linux-64ilp32" ]; then
                 export PATH="/opt/riscv/bin:$PATH"

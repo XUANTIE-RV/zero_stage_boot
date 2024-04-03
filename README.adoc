@@ -117,7 +117,7 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 			#interrupt-cells = <1>;
 			compatible = "thead,c900-plic";
 			reg = <0x0 0x08000000 0x0 0x04000000>;
-			riscv,ndev = <80>;
+			riscv,ndev = <64>;
 			interrupt-controller;
 			interrupts-extended = <
 				&cpu0_intc  0xffffffff &cpu0_intc  9
@@ -180,10 +180,10 @@ set *0x18030000 = 0x7f
 
 = Run
 
-Start Jtag Server with local-semihosting mode(opensbi requirements).
+Start Jtag Server.
 
 ....
-DebugServerConsole -prereset -ls
+DebugServerConsole -prereset
 ....
 
 Then use gdb connect the Jtag Server.

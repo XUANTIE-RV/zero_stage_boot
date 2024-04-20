@@ -93,6 +93,7 @@ void setup_features(void)
 			csr_write(CSR_MHINT, 0x31ea32c);
 			csr_write(CSR_MHINT2, 0x180);
 			csr_write(CSR_MHCR, 0x11ff);
+			csr_write(CSR_MHINT4, 0x80);
 		} else {
 			while(1);
 		}
@@ -125,6 +126,7 @@ void setup_features(void)
 			csr_write(CSR_MXSTATUS, 0x438000);
 			csr_write(CSR_MHINT, 0x1aa10c);
 			csr_write(CSR_MHCR, 0x10011ff);
+			csr_write(CSR_MHINT4, 0x10000000);
 		} else {
 			while(1);
 		}

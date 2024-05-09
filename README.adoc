@@ -206,33 +206,56 @@ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Document
 
 vmlinux: The Linux kernel ELF file
 
-= Appendix A
+= Appendix A - PMU in DTS
 
-Additional DTS examples(pmu, serial, bootargs with initrd):
+The configuration of PMU can be referred to link:https://github.com/riscv-software-src/opensbi/blob/master/docs/pmu_support.md[OpenSBI SBI PMU extension]
 
+The following is an example of PMU configuration for the Xuantie C-series CPU, which may need to be modified according to the datasheet during actual use.
 ....
 pmu {
 	compatible = "riscv,pmu";
 	riscv,event-to-mhpmevent =
+		/* <0x00001 0x00001 0xfffffff9>, */
+		/* <0x00002 0x00002 0xfffffffc>, */
+		/* PMU_HW_CACHE_REFERENCES -> ll_cache_read_access */
 		<0x00003 0x00000000 0x00000010>,
+		/* PMU_HW_CACHE_MISSES -> ll_cache_read_miss */
 		<0x00004 0x00000000 0x00000011>,
+		/* PMU_HW_BRANCH_INSTRUCTIONS -> inst_branch */
 		<0x00005 0x00000000 0x00000007>,
+		/* PMU_HW_BRANCH_MISSES -> inst_branch_mispredict */
 		<0x00006 0x00000000 0x00000006>,
+		/* PMU_HW_STALLED_CYCLES_FRONTEND -> ifu_stalled_cycle */
 		<0x00008 0x00000000 0x00000027>,
+		/* PMU_HW_STALLED_CYCLES_BACKEND -> idu_stalled_cycle */
 		<0x00009 0x00000000 0x00000028>,
+		/* L1D_READ_ACCESS -> l1_dcache_read_access */
 		<0x10000 0x00000000 0x0000000c>,
+		/* L1D_READ_MISS -> l1_dcache_read_miss */
 		<0x10001 0x00000000 0x0000000d>,
+		/* L1D_WRITE_ACCESS -> l1_dcache_write_access */
 		<0x10002 0x00000000 0x0000000e>,
+		/* L1D_WRITE_MISS -> l1_dcache_write_miss */
 		<0x10003 0x00000000 0x0000000f>,
+		/* L1I_READ_ACCESS -> l1_icache_access */
 		<0x10008 0x00000000 0x00000001>,
+		/* L1I_READ_MISS -> l1_icache_miss */
 		<0x10009 0x00000000 0x00000002>,
+		/* LL_READ_ACCESS -> ll_cache_read_access */
 		<0x10010 0x00000000 0x00000010>,
+		/* LL_READ_MISS -> ll_cache_read_miss */
 		<0x10011 0x00000000 0x00000011>,
+		/* LL_WRITE_ACCESS -> ll_cache_write_access */
 		<0x10012 0x00000000 0x00000012>,
+		/* LL_WRITE_MISS -> ll_cache_write_miss */
 		<0x10013 0x00000000 0x00000013>,
+		/* DTLB_READ_MISS -> dtlb_miss */
 		<0x10019 0x00000000 0x00000004>,
+		/* ITLB_READ_MISS -> itlb_miss */
 		<0x10021 0x00000000 0x00000003>,
+		/* BPU_READ_ACCESS -> branch_direction_prediction */
 		<0x10030 0x00000000 0x0000001c>,
+		/* BPU_READ_MISS -> branch_direction_misprediction */
 		<0x10031 0x00000000 0x0000001b>;
 	riscv,event-to-mhpmcounters =
 		<0x00003 0x00003 0xfffffff8>,
@@ -301,7 +324,78 @@ pmu {
 		<0x00000000 0x00000029 0xffffffff 0xffffffff 0xfffffff8>,
 		<0x00000000 0x0000002a 0xffffffff 0xffffffff 0xfffffff8>;
 };
+....
 
+Note that for some CPUs using `perf record` need to add the following two lines in `riscv,event-to-mhpmcounters`.
+This will result in inaccurate `perf stat` counting, which is not enable by default.
+....
+<0x00001 0x00001 0xfffffff9>,
+<0x00002 0x00002 0xfffffffc>,
+....
+
+For example, using `perf stat` & `perf record`:
+....
+# perf stat -ddd ls
+perf.data  trace.dat
+
+ Performance counter stats for 'ls':
+
+              6.25 msec task-clock                #    0.512 CPUs utilized
+                 6      context-switches          #    0.960 K/sec
+                 0      cpu-migrations            #    0.000 K/sec
+                53      page-faults               #    0.008 M/sec
+           4380379      cycles                    #    0.701 GHz
+           1130584      instructions              #    0.26  insn per cycle
+            141646      branches                  #   22.667 M/sec
+             18992      branch-misses             #   13.41% of all branches
+            297588      L1-dcache-loads           #   47.622 M/sec
+              8485      L1-dcache-load-misses     #    2.85% of all L1-dcache accesses
+        2155905152      LLC-loads                 # 344999.969 M/sec
+             11579      LLC-load-misses           #    0.00% of all LL-cache accesses
+   <not supported>      L1-icache-loads
+   <not supported>      L1-icache-load-misses
+   <not supported>      dTLB-loads
+   <not supported>      dTLB-load-misses
+   <not supported>      iTLB-loads
+   <not supported>      iTLB-load-misses
+   <not supported>      L1-dcache-prefetches
+   <not supported>      L1-dcache-prefetch-misses
+
+       0.012213926 seconds time elapsed
+
+       0.005146000 seconds user
+       0.005146000 seconds sys
+....
+
+....
+# echo 1000 > /proc/sys/kernel/perf_event_max_sample_rate
+# perf record -g ls
+perf.data  perf.data.old  trace.dat
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.006 MB perf.data (9 samples) ]
+....
+
+= Appendix B - How to compile perf
+
+We can use buildroot to compile rootfs with perf tool.
+....
+# git clone https://github.com/buildroot/buildroot.git
+# cd buildroot/
+# make qemu_riscv64_virt_defconfig
+# make menuconfig
+....
+
+Enable the following PACKAGE config in menuconfig.
+....
+BR2_PACKAGE_LINUX_TOOLS=y
+BR2_PACKAGE_LINUX_TOOLS_PERF=y
+BR2_PACKAGE_ELFUTILS=y
+....
+
+= Appendix C - Additional DTS
+
+Additional DTS examples(serial, bootargs with initrd):
+....
 serial@1900d000 {
 	compatible = "snps,dw-apb-uart";
 	reg = <0x0 0x1900d000 0x0 0x400>;
@@ -322,15 +416,3 @@ chosen {
 ....
 
 The 'serial' needs to be configured based on the actual configuration of 'reg', 'interrupts', 'clock-frequency', while the 'chosen' needs to be configured based on the actual configuration of 'linux,initrd-start', 'linux,initrd-end'.
-
-= Appendix B
-
-How to use buildroot to compile rootfs with perf tool:
-
-Enable the following PACKAGE config in defconfig.
-
-....
-BR2_PACKAGE_LINUX_TOOLS=y
-BR2_PACKAGE_LINUX_TOOLS_PERF=y
-BR2_PACKAGE_ELFUTILS=y
-....

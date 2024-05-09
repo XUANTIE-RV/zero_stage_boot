@@ -119,11 +119,17 @@ void setup_features(void)
 			csr_write(CSR_MXSTATUS, 0x438000);
 			csr_write(CSR_MHINT, 0x21aa10c);
 			csr_write(CSR_MHCR, 0x10011ff);
-		} else if (cpu_ver >= 0x1003 && cpu_ver <= 0xffff) { //1.0.3~
+		} else if (cpu_ver >= 0x1003 && cpu_ver <= 0x1009) { //1.0.3~1.0.9
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xa042000a);
 			csr_write(CSR_MXSTATUS, 0x438000);
 			csr_write(CSR_MHINT, 0x1aa10c);
+			csr_write(CSR_MHCR, 0x10011ff);
+		} else if (cpu_ver >= 0x100a && cpu_ver <= 0xffff) { //1.0.10~
+			csr_write(CSR_MSMPR, 0x1);
+			csr_write(CSR_MCCR2, 0xa042000a);
+			csr_write(CSR_MXSTATUS, 0x438000);
+			csr_write(CSR_MHINT, 0x21aa10c);
 			csr_write(CSR_MHCR, 0x10011ff);
 		} else {
 			while(1);

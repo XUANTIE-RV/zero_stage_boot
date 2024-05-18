@@ -79,6 +79,7 @@ void setup_features(void)
 			csr_write(CSR_MHINT, 0x31ea32c);
 			csr_write(CSR_MHINT2, 0x180);
 			csr_write(CSR_MHCR, 0x11ff);
+         		csr_write(CSR_MENVCFG, 0x4000000000000000);
 		} else if (cpu_ver >= 0x200f && cpu_ver <= 0x2045) { //2.0.15~2.1.5
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xe249000b);
@@ -86,6 +87,7 @@ void setup_features(void)
 			csr_write(CSR_MHINT, 0x11ea32c);
 			csr_write(CSR_MHINT2, 0x180);
 			csr_write(CSR_MHCR, 0x11ff);
+         		csr_write(CSR_MENVCFG, 0x4000000000000000);
 		} else if (cpu_ver >= 0x2046 && cpu_ver <= 0xffff) { //2.1.6~
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xe249000b);
@@ -93,6 +95,7 @@ void setup_features(void)
 			csr_write(CSR_MHINT, 0x31ea32c);
 			csr_write(CSR_MHINT2, 0x180);
 			csr_write(CSR_MHCR, 0x11ff);
+         		csr_write(CSR_MENVCFG, 0x4000000000000000);
 		} else {
 			while(1);
 		}
@@ -119,12 +122,18 @@ void setup_features(void)
 			csr_write(CSR_MXSTATUS, 0x438000);
 			csr_write(CSR_MHINT, 0x21aa10c);
 			csr_write(CSR_MHCR, 0x10011ff);
+		#if __riscv_xlen == 64
+         		csr_write(CSR_MENVCFG, 0x4000000000000000);
+		#endif
 		} else if (cpu_ver >= 0x1003 && cpu_ver <= 0xffff) { //1.0.3~
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xa042000a);
 			csr_write(CSR_MXSTATUS, 0x438000);
 			csr_write(CSR_MHINT, 0x1aa10c);
 			csr_write(CSR_MHCR, 0x10011ff);
+		#if __riscv_xlen == 64
+         		csr_write(CSR_MENVCFG, 0x4000000000000000);
+		#endif
 		} else {
 			while(1);
 		}
@@ -136,6 +145,9 @@ void setup_features(void)
 			csr_write(CSR_MXSTATUS, 0x438000);
 			csr_write(CSR_MHINT, 0x3A1AA10C);
 			csr_write(CSR_MHCR, 0x10011BF);
+		#if __riscv_xlen == 64
+         		csr_write(CSR_MENVCFG, 0x4000000000000000);
+		#endif
 		} else {
 			while(1);
 		}

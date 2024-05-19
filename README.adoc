@@ -28,7 +28,7 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 
 	memory@60000000 {
 		device_type = "memory";
-		reg = <0x0 0x60000000 0x1 0x00000000>;
+		reg = <0x0 0x60000000 0x0 0x40000000>;
 	};
 
 	cpus {
@@ -119,7 +119,7 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 
 		intc: interrupt-controller@8000000 {
 			#address-cells = <0>;
-			#interrupt-cells = <1>;
+			#interrupt-cells = <2>;
 			compatible = "thead,c900-plic";
 			reg = <0x0 0x08000000 0x0 0x04000000>;
 			riscv,ndev = <64>;
@@ -150,7 +150,7 @@ The T-HEAD C9xx DTB provided to OpenSBI generic firmware will usually have
 
 	memory@60000000 {
 		device_type = "memory";
-		reg = <0x0 0x60000000 0x1 0x00000000>;
+		reg = <0x0 0x60000000 0x0 0x40000000>;
 	};
 
 	cpus {

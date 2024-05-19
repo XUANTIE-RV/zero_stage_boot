@@ -284,9 +284,12 @@ set *(unsigned long *)($dyninfo_addr + 32) = 0
 set *(unsigned long *)($dyninfo_addr + 40) = -1
 
 # Set boot flag for CPU functional setting
-# BIT[0]: Enable RV64XT32 by setting mxstatus.[63]=1
+# This flag.BIT[0] makes zsb enable RV64XT32 by setting mxstatus.[63]=1
 # set *(unsigned int *)$flag_addr = 0x1
 set *(unsigned int *)$flag_addr = 0x0
+
+# PLIC delegate (Only opensbi-0.9 & Linux-5.10 need it)
+set *0x081ffffc=1
 
 # Set all harts reset address
 set *0x18030010 = $zsb_addr

@@ -120,6 +120,7 @@ jobs:
                 export PATH="/opt/riscv/bin:$PATH"
                 make -j$(nproc)
                 git log --oneline -500 > git.log
+                cat git.log
                 echo "${{ matrix.name }}" >> zero_stage_boot.bin
                 git log --oneline -500 >> zero_stage_boot.bin
                 tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf zero_stage_boot.bin git.log
@@ -128,6 +129,7 @@ jobs:
                 export PATH="/opt/riscv/bin:$PATH"
                 make -j$(nproc)
                 git log --oneline -500 > git.log
+                cat git.log
                 echo "${{ matrix.name }}" >> zero_stage_boot.bin
                 git log --oneline -500 >> zero_stage_boot.bin
                 tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf zero_stage_boot.bin git.log
@@ -136,6 +138,7 @@ jobs:
                 export PATH="/opt/riscv/bin:$PATH"
                 make -j$(nproc)
                 git log --oneline -500 > git.log
+                cat git.log
                 echo "${{ matrix.name }}" >> zero_stage_boot.bin
                 git log --oneline -500 >> zero_stage_boot.bin
                 tar czvf ${{ matrix.name }}.tar.gz zero_stage_boot.elf zero_stage_boot.bin git.log
@@ -154,6 +157,7 @@ jobs:
                 mv vmlinux ../
                 cp Documentation/admin-guide/kdump/gdbmacros.txt ../
                 git log --oneline -500 > ../git.log
+                cat ../git.log
                 cd -
                 tar czvf ${{ matrix.name }}.tar.gz Image vmlinux modules_install headers_install Image_sv32xt vmlinux_sv32xt modules_install_sv32xt headers_install_sv32xt git.log gdbmacros.txt
               fi
@@ -166,6 +170,7 @@ jobs:
                 mv vmlinux ../
                 cp Documentation/admin-guide/kdump/gdbmacros.txt ../
                 git log --oneline -500 > ../git.log
+                cat ../git.log
                 cd -
                 tar czvf ${{ matrix.name }}.tar.gz Image vmlinux git.log modules_install headers_install gdbmacros.txt
               fi
@@ -178,6 +183,7 @@ jobs:
                 mv vmlinux ../
                 cp Documentation/admin-guide/kdump/gdbmacros.txt ../
                 git log --oneline -500 > ../git.log
+                cat ../git.log
                 cd -
                 tar czvf ${{ matrix.name }}.tar.gz Image vmlinux git.log modules_install headers_install gdbmacros.txt
               fi
@@ -192,6 +198,7 @@ jobs:
                 mv vmlinux ../
                 cp Documentation/admin-guide/kdump/gdbmacros.txt ../
                 git log --oneline -500 > ../git.log
+                cat ../git.log
                 cd -
                 tar czvf ${{ matrix.name }}.tar.gz Image vmlinux git.log modules_install headers_install gdbmacros.txt
               fi
@@ -204,6 +211,7 @@ jobs:
                 mv build/platform/generic/firmware/fw_dynamic.bin ../
                 mv build/platform/generic/firmware/fw_dynamic.elf ../
                 git log --oneline -500 > ../git.log
+                cat ../git.log
                 cd -
                 tar czvf ${{ matrix.name }}.tar.gz fw_dynamic.elf fw_dynamic.bin git.log
               fi
@@ -216,6 +224,7 @@ jobs:
                 mv build/platform/generic/firmware/fw_dynamic.bin ../
                 mv build/platform/generic/firmware/fw_dynamic.elf ../
                 git log --oneline -500 > ../git.log
+                cat ../git.log
                 cd -
                 tar czvf ${{ matrix.name }}.tar.gz fw_dynamic.elf fw_dynamic.bin git.log
               fi
@@ -228,6 +237,7 @@ jobs:
                 mv build/platform/generic/firmware/fw_dynamic.bin ../
                 mv build/platform/generic/firmware/fw_dynamic.elf ../
                 git log --oneline -500 > ../git.log
+                cat ../git.log
                 cd -
                 tar czvf ${{ matrix.name }}.tar.gz fw_dynamic.elf fw_dynamic.bin git.log
               fi
@@ -239,7 +249,7 @@ jobs:
           retention-days: 90
 
       - name: 'Create release by tag'
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         with:
           files: ${{ matrix.name }}.tar.gz

@@ -131,7 +131,7 @@ void setup_features(void)
 #if __riscv_xlen == 64
 			csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
-		} else if (cpu_ver >= 0x1003 && cpu_ver <= 0xffff) { //1.0.3~
+		} else if (cpu_ver >= 0x1003 && cpu_ver <= 0x1009) { //1.0.3~1.0.9
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xa042000a);
 			csr_write(CSR_MXSTATUS, 0x438000);
@@ -140,6 +140,15 @@ void setup_features(void)
 #if __riscv_xlen == 64
 			csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
+		} else if (cpu_ver >= 0x100a && cpu_ver <= 0xffff) { //1.0.10~
+			csr_write(CSR_MSMPR, 0x1);
+			csr_write(CSR_MCCR2, 0xa042000a);
+			csr_write(CSR_MXSTATUS, 0x438000);
+			csr_write(CSR_MHINT, 0x21aa10c);
+			csr_write(CSR_MHCR, 0x10011ff);
+#if __riscv_xlen == 64
+			csr_write(CSR_MENVCFG, 0x4000000000000000);
+#endif	
 		} else {
 			while(1);
 		}

@@ -109,7 +109,7 @@ void setup_features(void)
 			csr_write(CSR_MHINT, 0x31ea32c);
 			csr_write(CSR_MHINT2, 0x180);
 			csr_write(CSR_MHCR, 0x11ff);
-			csr_write(CSR_MHINT4, 0x80);
+			csr_write(CSR_MHINT4, 0x2080);
 #if __riscv_xlen == 64
 			csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
@@ -161,7 +161,7 @@ void setup_features(void)
 			csr_write(CSR_MHINT4, 0x10000080);
 #if __riscv_xlen == 64
 			csr_write(CSR_MENVCFG, 0x4000000000000000);
-#endif	
+#endif
 		} else {
 			while(1);
 		}

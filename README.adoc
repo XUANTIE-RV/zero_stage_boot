@@ -321,6 +321,20 @@ set $pc         = $zsb_addr
 
 # Release all harts from reset
 set *0x18030000 = 0x7f
+
+# If you don't have a reset controller in SoC, and harts reset into bootrom's loop code.
+# Then, Use below method:
+# thread 1
+# set $pc = $zsb_addr
+# thread 2
+# set $pc = $zsb_addr
+# thread 3
+# set $pc = $zsb_addr
+# thread 4
+# set $pc = $zsb_addr
+# thread 5
+# set $pc = $zsb_addr
+# -ex "c" would let all harts jump to $zsb_addr.
 ....
 
 = Run

@@ -48,6 +48,7 @@ The XuanTie C9xx DTB provided to OpenSBI generic firmware will usually have
 
 	memory@60000000 {
 		device_type = "memory";
+                Caution: Determine your own address here
 		reg = <0x0 0x60000000 0x0 0x40000000>;
 	};
 
@@ -134,6 +135,7 @@ The XuanTie C9xx DTB provided to OpenSBI generic firmware will usually have
 				&cpu3_intc  3 &cpu3_intc  7
 				>;
 			reg = <0x0 0x0c000000 0x0 0x04000000>;
+                Caution: Determine your own address here
 			clint,has-no-64bit-mmio;
 		};
 
@@ -142,6 +144,7 @@ The XuanTie C9xx DTB provided to OpenSBI generic firmware will usually have
 			#interrupt-cells = <2>;
 			compatible = "thead,c900-plic";
 			reg = <0x0 0x08000000 0x0 0x04000000>;
+                Caution: Determine your own address here
 			riscv,ndev = <64>;
 			interrupt-controller;
 			interrupts-extended = <
@@ -170,6 +173,7 @@ The XuanTie C9xx DTB provided to OpenSBI generic firmware will usually have
 
 	memory@60000000 {
 		device_type = "memory";
+                Caution: Determine your own address here
 		reg = <0x0 0x60000000 0x0 0x40000000>;
 	};
 
@@ -251,6 +255,7 @@ The XuanTie C9xx DTB provided to OpenSBI generic firmware will usually have
 				&cpu3_intc  3 &cpu3_intc  7
 				>;
 			reg = <0x0 0x0c000000 0x0 0x04000000>;
+                Caution: Determine your own address here
 			clint,has-no-64bit-mmio;
 		};
 
@@ -259,6 +264,7 @@ The XuanTie C9xx DTB provided to OpenSBI generic firmware will usually have
 			#interrupt-cells = <1>;
 			compatible = "riscv,plic0";
 			reg = <0x0 0x08000000 0x0 0x04000000>;
+                Caution: Determine your own address here
 			riscv,ndev = <64>;
 			interrupt-controller;
 			interrupts-extended = <

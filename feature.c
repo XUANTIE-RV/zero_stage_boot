@@ -31,6 +31,21 @@ void setup_features(void)
 	 * you need to confirm it by your own soc design.
 	 */
 	switch (cpu_type) {
+	case 0x2:
+		if (cpu_ver >= 0x0) {
+			csr_write(CSR_MSMPR, 0x1);
+			csr_write(CSR_MCCR2, 0xa042000a);
+			csr_write(CSR_MXSTATUS, 0x438000);
+			csr_write(CSR_MHINT, 0x21aa10c);
+			csr_write(CSR_MHCR, 0x10011ff);
+			csr_write(CSR_MHINT4, 0x10000080);
+#if __riscv_xlen == 64
+			csr_write(CSR_MENVCFG, 0x4000000000000000);
+#endif
+		} else {
+			while(1);
+		}
+		break;
 	case 0x3:
 		if (cpu_ver >= 0x1080 && cpu_ver <= 0x10bf) { //1.2.0~1.2.x
 			csr_write(CSR_MCCR2, 0xe0010009);

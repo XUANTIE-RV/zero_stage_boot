@@ -317,7 +317,7 @@ set *(unsigned int *)$flag_addr = 0x0
 # PLIC delegate (Only opensbi-0.9 & Linux-5.10 need it)
 set *0x081ffffc=1
 
-# Set all harts reset address
+# Set all harts reset address (reset controller demo according to your SoC definition)
 set *0x18030010 = $zsb_addr
 set *0x18030018 = $zsb_addr
 set *0x18030020 = $zsb_addr

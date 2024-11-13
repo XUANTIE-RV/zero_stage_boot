@@ -2,6 +2,7 @@
 #include "riscv_encoding.h"
 
 #define FLAG_RV64XT32	0x1
+#define FLAG_COPINSTEE	0x2
 
 extern unsigned long _load_start;
 
@@ -12,6 +13,10 @@ static inline void setup_boot_flag(void)
 	boot_flag = *(unsigned int *)(_load_start + 0x00008000 - 0x100);
 	if (boot_flag & FLAG_RV64XT32)
 		csr_write(CSR_MXSTATUS, csr_read(CSR_MXSTATUS) | (1ULL << 63));
+	if (boot_flag & FLAG_COPINSTEE) {
+		csr_set(CSR_MXSTATUS, 1ULL << 24);
+		csr_clear(CSR_MXSTATUS, 1ULL << 22);
+	}
 #endif
 }
 

@@ -58,7 +58,7 @@ _relocate_copy_done:
 	 *Prepare percpu stack
 	 */
 	csrr	t0, mhartid
-	li	t1, 0x400
+	li	t1, 0x800
 	mul	t1, t1, t0
 	lla	sp, stacks
 	add	sp, sp, t1
@@ -96,5 +96,5 @@ _load_start:
 	RISCV_PTR _fw_start
 
 	.bss
-	.skip 0x4000
+	.skip 0x1000
 stacks:

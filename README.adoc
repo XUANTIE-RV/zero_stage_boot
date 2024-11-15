@@ -312,6 +312,8 @@ set *(unsigned long *)($dyninfo_addr + 40) = -1
 # Set boot flag for CPU functional setting
 # This flag.BIT[0] makes zsb enable RV64XT32 by setting mxstatus.[63]=1
 # set *(unsigned int *)$flag_addr = 0x1
+# This flag.BIT[1] makes zsb enable COPINSTEE by setting mxstatus.[24]=1 && mxstatus.[22]=0
+# set *(unsigned int *)$flag_addr = 0x2
 set *(unsigned int *)$flag_addr = 0x0
 
 # PLIC delegate (Only opensbi-0.9 & Linux-5.10 need it)

@@ -189,7 +189,7 @@ jobs:
               fi
               if [ x"${{ matrix.name }}" = x"linux-5.10-64lp64" ]; then
                 export PATH="/opt/riscv/bin:$PATH"
-                git clone https://github.com/c-sky/csky-linux.git -b linux-5.10.4 linux
+                git clone https://github.com/XUANTIE-RV/linux.git -b linux-5.10.4
                 cd linux
                 echo CONFIG_STD_SVPBMT=y >> arch/riscv/configs/defconfig
                 make ARCH=riscv EXTRA_CFLAGS+=-g defconfig all INSTALL_MOD_PATH=../modules_install modules_install INSTALL_HDR_PATH=../headers_install headers_install -j$(nproc)

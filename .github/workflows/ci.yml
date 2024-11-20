@@ -30,6 +30,8 @@ jobs:
             toolchain_tripe: riscv64-unknown-linux-gnu-
           - name: linux-6.6-64lp64
             toolchain_tripe: riscv64-unknown-linux-gnu-
+          - name: linux-6.6-64lp64-debug
+            toolchain_tripe: riscv64-unknown-linux-gnu-
           - name: linux-6.6-64ilp32
             toolchain_tripe: riscv64-unknown-elf-
           - name: zsb-32ilp32
@@ -53,7 +55,7 @@ jobs:
       - name: Install software
         run: |
               sudo apt update && \
-              sudo apt install -y build-essential
+              sudo apt install -y build-essential libelf-dev dwarves
 
       - name: Checkout source
         uses: actions/checkout@v4
@@ -82,6 +84,11 @@ jobs:
                 rm -v ${rv32_toolchain_file_name}
               fi
               if [ x"${{ matrix.name }}" = x"linux-6.6-64lp64" ]; then
+                wget ${rv64_toolchain}/${rv64_toolchain_file_name}
+                tar -xvf ${rv64_toolchain_file_name} -C /opt
+                rm -v ${rv64_toolchain_file_name}
+              fi
+              if [ x"${{ matrix.name }}" = x"linux-6.6-64lp64-debug" ]; then
                 wget ${rv64_toolchain}/${rv64_toolchain_file_name}
                 tar -xvf ${rv64_toolchain_file_name} -C /opt
                 rm -v ${rv64_toolchain_file_name}
@@ -165,7 +172,20 @@ jobs:
                 export PATH="/opt/riscv/bin:$PATH"
                 git clone https://github.com/ruyisdk/linux-xuantie-kernel.git linux
                 cd linux
-                make ARCH=riscv EXTRA_CFLAGS+=-g defconfig all INSTALL_MOD_PATH=../modules_install modules_install INSTALL_HDR_PATH=../headers_install headers_install -j$(nproc)
+                make ARCH=riscv EXTRA_CFLAGS+=-g xuantie_defconfig all INSTALL_MOD_PATH=../modules_install modules_install INSTALL_HDR_PATH=../headers_install headers_install -j$(nproc)
+                mv arch/riscv/boot/Image ../
+                mv vmlinux ../
+                cp Documentation/admin-guide/kdump/gdbmacros.txt ../
+                git log --oneline -500 > ../git.log
+                cat ../git.log
+                cd -
+                tar czvf ${{ matrix.name }}.tar.gz Image vmlinux git.log modules_install headers_install gdbmacros.txt
+              fi
+              if [ x"${{ matrix.name }}" = x"linux-6.6-64lp64-debug" ]; then
+                export PATH="/opt/riscv/bin:$PATH"
+                git clone https://github.com/ruyisdk/linux-xuantie-kernel.git linux
+                cd linux
+                make ARCH=riscv EXTRA_CFLAGS+=-g xuantie_debug_defconfig all INSTALL_MOD_PATH=../modules_install modules_install INSTALL_HDR_PATH=../headers_install headers_install -j$(nproc)
                 mv arch/riscv/boot/Image ../
                 mv vmlinux ../
                 cp Documentation/admin-guide/kdump/gdbmacros.txt ../

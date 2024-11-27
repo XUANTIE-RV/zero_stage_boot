@@ -17,6 +17,8 @@ env:
   rv64ilp32_toolchain: https://github.com/ruyisdk/riscv-gnu-toolchain-rv64ilp32/releases/download/2024.03.08
   rv64ilp32_toolchain_file_name: riscv64ilp32-elf-ubuntu-22.04-gcc-nightly-2024.03.08-nightly.tar.gz
 
+permissions:
+  contents: write
 
 jobs:
   kernel:

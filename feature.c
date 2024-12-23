@@ -211,6 +211,21 @@ void setup_features(void)
 			while(1);
 		}
 		break;
+    case 0xd:
+        if (cpu_ver >= 0x0) {
+            csr_write(CSR_MSMPR, 0x1);
+            csr_write(CSR_MCCR2, 0xA0420002);
+            csr_write(CSR_MXSTATUS, 0x438100);
+            csr_write(CSR_MHINT, 0x21AA10C);
+            csr_write(CSR_MHCR, 0x10011FF);
+            csr_write(CSR_MHINT4, 0x10000080);
+#if __riscv_xlen == 64
+            csr_write(CSR_MENVCFG, 0x4000000000000000);
+#endif
+        } else {
+            while(1);
+        }
+        break;
 	default:
 		while(1);
 	}

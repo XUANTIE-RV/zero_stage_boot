@@ -20,6 +20,20 @@ static inline void setup_boot_flag(void)
 #endif
 }
 
+/*
+ * Judge whether there is a Xuantie Link and Initialize it if needed.
+ * This Function use the condition CSR_MAPBADDR2 !=0 to judge.
+ */
+void xuantie_link_initialize(void)
+{
+	unsigned long long mapbaddr2 = csr_read(CSR_MAPBADDR2);
+	if (mapbaddr2 != 0){
+		// set l3cr to enable l3cache allocate, ecc, tlb pref, inst pref
+		unsigned long long *xl_cr_addr = (unsigned long long *)(mapbaddr2);
+		*xl_cr_addr = *xl_cr_addr | 0xe000000a;
+	}
+}
+
 void setup_features(void)
 {
 	unsigned int i, cpu_type, cpu_ver;

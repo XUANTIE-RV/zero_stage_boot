@@ -286,6 +286,15 @@ set confirm off
 set height  0
 monitor set resume-bkpt-exception on
 
+# xuantie-link setting
+# if you have xuantie link, please use these instruction to set xuantie-link
+# set $mapbaddr2 [monitor i r 0xfc3]
+# set *(unsigned long *)($mapbaddr2 + 0x810) = 1
+
+
+
+
+
 # memory layout
 set $opensbi_addr = 0x60000000
 set $vmlinux_addr = $opensbi_addr + 0x00400000

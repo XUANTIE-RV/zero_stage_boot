@@ -14,6 +14,7 @@
 #define CSR_MRVBR        0x7c7
 #define CSR_MCOUNTERWEN  0x7c9
 #define CSR_MSMPR	 0x7f3
+#define CSR_MAPBADDR2     0xfc3
 
 /* clang-format off */
 #define MSTATUS_SIE			_UL(0x00000002)

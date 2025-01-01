@@ -13,6 +13,27 @@ entry:
 	csrw    CSR_MCOR, t0
 
 	/*
+	 * Judge whether there is a Xuantie Link and initialize it if needed.
+	 * This Function use the condition CSR_MAPBADDR2 !=0 to judge.
+	 * If you have connected CSR_MAPBADDR2 to a non-zero value, and it
+	 * doesn't point to the base address of the Xuantie Link register,
+	 * please delete these lines and the line 
+	 * `call xuantie_link_initialize`
+	 * CSR_MAPBADDR2 only can be connected when multi-cluster
+	 * coherency is supported.
+	 * The following lines only enable the coherency.
+	 * More Xuantie Link initial operations are in the
+	 * xuantie_link_initialize function after stack is set.
+	 */
+	csrr t0, CSR_MAPBADDR2
+	beqz t0, 1f
+	li   t1, 0x810
+	add  t0, t0, t1
+	li   t1, 0x1
+	sd   t1, (t0)
+    1:
+
+	/*
 	 * Enable cache coherency
 	 */
 	li	t0, 1
@@ -66,6 +87,7 @@ _relocate_copy_done:
 	/*
 	 * Call C routine
 	 */
+	call    xuantie_link_initialize
 	call	setup_features
 	call	next_stage
 

@@ -511,3 +511,41 @@ chosen {
 ....
 
 The 'serial' needs to be configured based on the actual configuration of 'reg', 'interrupts', 'clock-frequency', while the 'chosen' needs to be configured based on the actual configuration of 'linux,initrd-start', 'linux,initrd-end'.
+
+= Appendix D - xuantie-link setting
+....
+set $mapbaddr2 [monitor i r 0xfc3]
+set $l3prxcr = $mapbaddr2 + 0xc0
+set $l3smpr  = $mapbaddr2 + 0x810
+ Enable Cluster 0
+set *($l3prxcr) = 0x01
+set *($l3smpr) = 0x1
+# Enable Cluster 1
+set *($l3prxcr) = 0x11
+set *($l3smpr) = 0x1
+# Enable Cluster 2
+set *($l3prxcr) = 0x21
+set *($l3smpr) = 0x1
+# Enable Cluster 3
+set *($l3prxcr) = 0x31
+set *($l3smpr) = 0x1
+# Enable Cluster 4
+set *($l3prxcr) = 0x41
+set *($l3smpr) = 0x1
+# Enable Cluster 5
+set *($l3prxcr) = 0x51
+set *($l3smpr) = 0x1
+# Enable Cluster 6
+set *($l3prxcr) = 0x61
+set *($l3smpr) = 0x1
+# Enable Cluster 7
+set *($l3prxcr) = 0x71
+set *($l3smpr) = 0x1
+other operations
+# Disable proxy
+set *($l3prxcr) = 0x0
+
+# Close L3
+# set $l3decr = $stl3_base + 0x300
+# set *($l3decr) = 0x0
+....

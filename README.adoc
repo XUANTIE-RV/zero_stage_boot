@@ -316,6 +316,9 @@ set *(unsigned long *)($dyninfo_addr + 40) = 0
 # set *(unsigned int *)$flag_addr = 0x2
 set *(unsigned int *)$flag_addr = 0x0
 
+# Set fast memory base reg for c908x
+# set $mtnfastmba = 0xXXXX
+
 # PLIC delegate (Only opensbi-0.9 & Linux-5.10 need it)
 set *0x081ffffc=1
 

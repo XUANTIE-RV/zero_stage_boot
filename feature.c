@@ -2,6 +2,7 @@
 #include "riscv_encoding.h"
 
 #define FLAG_RV64XT32	0x1
+#define FLAG_COPINSTEE	0x2
 
 extern unsigned long _load_start;
 
@@ -12,6 +13,10 @@ static inline void setup_boot_flag(void)
 	boot_flag = *(unsigned int *)(_load_start + 0x00008000 - 0x100);
 	if (boot_flag & FLAG_RV64XT32)
 		csr_write(CSR_MXSTATUS, csr_read(CSR_MXSTATUS) | (1ULL << 63));
+	if (boot_flag & FLAG_COPINSTEE) {
+		csr_set(CSR_MXSTATUS, 1ULL << 24);
+		csr_clear(CSR_MXSTATUS, 1ULL << 22);
+	}
 #endif
 }
 
@@ -35,7 +40,7 @@ void setup_features(void)
 		if (cpu_ver >= 0x0) {
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xa042000a);
-			csr_write(CSR_MXSTATUS, 0x438000);
+			csr_write(CSR_MXSTATUS, 0x438100);
 			csr_write(CSR_MHINT, 0x21aa10c);
 			csr_write(CSR_MHCR, 0x10011ff);
 			csr_write(CSR_MHINT4, 0x10000080);
@@ -117,10 +122,21 @@ void setup_features(void)
 #if __riscv_xlen == 64
 			csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
-		} else if (cpu_ver >= 0x20c4 && cpu_ver <= 0xffff) { //2.3.4~
+		} else if (cpu_ver >= 0x20c4 && cpu_ver <= 0x2fff) { //2.3.4~2.x.x
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xe249000b);
-			csr_write(CSR_MXSTATUS, 0x438000);
+			csr_write(CSR_MXSTATUS, 0x438100);
+			csr_write(CSR_MHINT, 0x31ea32c);
+			csr_write(CSR_MHINT2, 0x180);
+			csr_write(CSR_MHCR, 0x11ff);
+			csr_write(CSR_MHINT4, 0x2080);
+#if __riscv_xlen == 64
+			csr_write(CSR_MENVCFG, 0x4000000000000000);
+#endif
+		} else if (cpu_ver >= 0x3000 && cpu_ver <= 0x3fff) { //3.0.0~3.x.x
+			csr_write(CSR_MSMPR, 0x1);
+			csr_write(CSR_MCCR2, 0xe249000b);
+			csr_write(CSR_MXSTATUS, 0x438100);
 			csr_write(CSR_MHINT, 0x31ea32c);
 			csr_write(CSR_MHINT2, 0x180);
 			csr_write(CSR_MHCR, 0x11ff);
@@ -170,7 +186,7 @@ void setup_features(void)
 		} else if (cpu_ver >= 0x100c && cpu_ver <= 0xffff) { //1.0.12~
 			csr_write(CSR_MSMPR, 0x1);
 			csr_write(CSR_MCCR2, 0xa042000a);
-			csr_write(CSR_MXSTATUS, 0x438000);
+			csr_write(CSR_MXSTATUS, 0x438100);
 			csr_write(CSR_MHINT, 0x21aa10c);
 			csr_write(CSR_MHCR, 0x10011ff);
 			csr_write(CSR_MHINT4, 0x10000080);
@@ -188,6 +204,21 @@ void setup_features(void)
 			csr_write(CSR_MXSTATUS, 0x438000);
 			csr_write(CSR_MHINT, 0x3A1AA10C);
 			csr_write(CSR_MHCR, 0x10011BF);
+#if __riscv_xlen == 64
+			csr_write(CSR_MENVCFG, 0x4000000000000000);
+#endif
+		} else {
+			while(1);
+		}
+		break;
+	case 0xd:
+		if (cpu_ver >= 0x0) {
+			csr_write(CSR_MSMPR, 0x1);
+			csr_write(CSR_MCCR2, 0xA0420002);
+			csr_write(CSR_MXSTATUS, 0x438100);
+			csr_write(CSR_MHINT, 0x21AA10C);
+			csr_write(CSR_MHCR, 0x10011FF);
+			csr_write(CSR_MHINT4, 0x10000080);
 #if __riscv_xlen == 64
 			csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif

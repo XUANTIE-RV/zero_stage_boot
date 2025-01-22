@@ -60,8 +60,11 @@ _relocate_copy_done:
 	csrr	t0, mhartid
 	li	t1, 0x800
 	mul	t1, t1, t0
-	lla	sp, stacks
-	add	sp, sp, t1
+	lla	t2, _load_start
+	REG_L   sp, 0(t2)
+	li	t0, 32
+	sub	sp, sp, t0
+	sub	sp, sp, t1
 
 	/*
 	 * Call C routine

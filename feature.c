@@ -22,14 +22,15 @@ static inline void setup_boot_flag(void)
 
 void setup_features(void)
 {
-	unsigned int i, cpu_type, cpu_ver;
+	unsigned int i, cpu_type, cpu_ver, cpu_tnmodel;
 	unsigned long version[8];
 
 	for (i = 0; i < 8; i++)
 		version[i] = csr_read(CSR_MCPUID);
 
-	cpu_type = (version[0] >> 18) & 0xf;
-	cpu_ver  = (version[1] >> 12) & 0xffff;
+	cpu_type	= (version[0] >> 18) & 0xf;
+	cpu_tnmodel	= (version[0] >> 14) & 0x1;
+	cpu_ver		= (version[1] >> 12) & 0xffff;
 
 	/*
 	 * Warning: CSR_MCCR2 contains an L2 cache latency setting,
@@ -158,41 +159,69 @@ void setup_features(void)
 		}
 		break;
 	case 0x5:
-		if (cpu_ver >= 0x0000 && cpu_ver <= 0x0007) { //0.0.0~0.0.7
-			csr_write(CSR_MSMPR, 0x1);
-			csr_write(CSR_MCCR2, 0xe0420008);
-			csr_write(CSR_MXSTATUS, 0x638000);
-			csr_write(CSR_MHINT, 0x2c50c);
-			csr_write(CSR_MHCR, 0x11ff);
-		} else if (cpu_ver >= 0x0040 && cpu_ver <= 0x1002) { //0.1.0~1.0.2
-			csr_write(CSR_MSMPR, 0x1);
-			csr_write(CSR_MCCR2, 0xa042000a);
-			csr_write(CSR_MXSTATUS, 0x438000);
-			csr_write(CSR_MHINT, 0x21aa10c);
-			csr_write(CSR_MHCR, 0x10011ff);
+		if(cpu_tnmodel == 0) { //c908
+			if (cpu_ver >= 0x0000 && cpu_ver <= 0x0007) { //0.0.0~0.0.7
+				csr_write(CSR_MSMPR, 0x1);
+				csr_write(CSR_MCCR2, 0xe0420008);
+				csr_write(CSR_MXSTATUS, 0x638000);
+				csr_write(CSR_MHINT, 0x2c50c);
+				csr_write(CSR_MHCR, 0x11ff);
+			} else if (cpu_ver >= 0x0040 && cpu_ver <= 0x1002) { //0.1.0~1.0.2
+				csr_write(CSR_MSMPR, 0x1);
+				csr_write(CSR_MCCR2, 0xa042000a);
+				csr_write(CSR_MXSTATUS, 0x438000);
+				csr_write(CSR_MHINT, 0x21aa10c);
+				csr_write(CSR_MHCR, 0x10011ff);
 #if __riscv_xlen == 64
-			csr_write(CSR_MENVCFG, 0x4000000000000000);
+				csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
-		} else if (cpu_ver >= 0x1003 && cpu_ver <= 0x100b) { //1.0.3~1.0.11
+			} else if (cpu_ver >= 0x1003 && cpu_ver <= 0x100b) { //1.0.3~1.0.11
 
-			csr_write(CSR_MSMPR, 0x1);
-			csr_write(CSR_MCCR2, 0xa042000a);
-			csr_write(CSR_MXSTATUS, 0x438000);
-			csr_write(CSR_MHINT, 0x1aa10c);
-			csr_write(CSR_MHCR, 0x10011ff);
+				csr_write(CSR_MSMPR, 0x1);
+				csr_write(CSR_MCCR2, 0xa042000a);
+				csr_write(CSR_MXSTATUS, 0x438000);
+				csr_write(CSR_MHINT, 0x1aa10c);
+				csr_write(CSR_MHCR, 0x10011ff);
 #if __riscv_xlen == 64
-			csr_write(CSR_MENVCFG, 0x4000000000000000);
+				csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
-		} else if (cpu_ver >= 0x100c && cpu_ver <= 0xffff) { //1.0.12~
-			csr_write(CSR_MSMPR, 0x1);
-			csr_write(CSR_MCCR2, 0xa042000a);
-			csr_write(CSR_MXSTATUS, 0x438100);
-			csr_write(CSR_MHINT, 0x21aa10c);
-			csr_write(CSR_MHCR, 0x10011ff);
-			csr_write(CSR_MHINT4, 0x10000080);
+			} else if (cpu_ver >= 0x100c && cpu_ver <= 0x1fff) { //1.0.12~
+				csr_write(CSR_MSMPR, 0x1);
+				csr_write(CSR_MCCR2, 0xa042000a);
+				csr_write(CSR_MXSTATUS, 0x438100);
+				csr_write(CSR_MHINT, 0x21aa10c);
+				csr_write(CSR_MHCR, 0x10011ff);
+				csr_write(CSR_MHINT4, 0x10000080);
 #if __riscv_xlen == 64
-			csr_write(CSR_MENVCFG, 0x4000000000000000);
+				csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
+			} else if (cpu_ver >= 0x2000 && cpu_ver <= 0xffff) { //2.0.0~
+				csr_write(CSR_MSMPR, 0x1);
+				csr_write(CSR_MCCR2, 0xa042000a);
+				csr_write(CSR_MXSTATUS, 0x438100);
+				csr_write(CSR_MHINT, 0x21aa10c);
+				csr_write(CSR_MHCR, 0x10011ff);
+				csr_write(CSR_MHINT4, 0x10000080);
+#if __riscv_xlen == 64
+				csr_write(CSR_MENVCFG, 0x4000000000000000);
+#endif
+			} else {
+				while(1);
+			}
+		} else if (cpu_tnmodel == 1) {
+			if (cpu_ver >= 0x0) {
+				csr_write(CSR_MSMPR, 0x1);
+				csr_write(CSR_MCCR2, 0xA0420002);
+				csr_write(CSR_MXSTATUS, 0x438100);
+				csr_write(CSR_MHINT, 0x21AA10C);
+				csr_write(CSR_MHCR, 0x10011FF);
+				csr_write(CSR_MHINT4, 0x10000080);
+#if __riscv_xlen == 64
+				csr_write(CSR_MENVCFG, 0x4000000000000000);
+#endif
+			} else {
+				while(1);
+			}
 		} else {
 			while(1);
 		}
@@ -204,21 +233,6 @@ void setup_features(void)
 			csr_write(CSR_MXSTATUS, 0x438000);
 			csr_write(CSR_MHINT, 0x3A1AA10C);
 			csr_write(CSR_MHCR, 0x10011BF);
-#if __riscv_xlen == 64
-			csr_write(CSR_MENVCFG, 0x4000000000000000);
-#endif
-		} else {
-			while(1);
-		}
-		break;
-	case 0xd:
-		if (cpu_ver >= 0x0) {
-			csr_write(CSR_MSMPR, 0x1);
-			csr_write(CSR_MCCR2, 0xA0420002);
-			csr_write(CSR_MXSTATUS, 0x438100);
-			csr_write(CSR_MHINT, 0x21AA10C);
-			csr_write(CSR_MHCR, 0x10011FF);
-			csr_write(CSR_MHINT4, 0x10000080);
 #if __riscv_xlen == 64
 			csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif

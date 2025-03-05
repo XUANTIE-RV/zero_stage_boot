@@ -25,6 +25,15 @@ void setup_features(void)
 	unsigned int i, cpu_type, cpu_ver, cpu_tnmodel;
 	unsigned long version[8];
 
+	/* As CPUID is a fifo register, try to find
+	 * the CPUID[0] whose index(bit[31:28]) == 0
+	 */
+	for (i = 0; i < 8; i++) {
+		version[0] = csr_read(CSR_MCPUID);
+		if (((version[0]&0xf0000000) >> 28) == 0)
+			break;
+	}
+
 	for (i = 0; i < 8; i++)
 		version[i] = csr_read(CSR_MCPUID);
 

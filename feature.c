@@ -29,14 +29,27 @@ void setup_features(void)
 		version[i] = csr_read(CSR_MCPUID);
 
 	cpu_type	= (version[0] >> 18) & 0xf;
-	cpu_tnmodel	= (version[0] >> 14) & 0x1;
-	cpu_ver		= (version[1] >> 12) & 0xffff;
+	cpu_tnmodel = (version[0] >> 14) & 0x1;
+	cpu_ver	 = (version[1] >> 12) & 0xffff;
 
 	/*
 	 * Warning: CSR_MCCR2 contains an L2 cache latency setting,
 	 * you need to confirm it by your own soc design.
 	 */
 	switch (cpu_type) {
+	case 0x1:
+		if (cpu_ver >= 0x0) {
+			csr_write(CSR_MSMPR, 0x1);
+			csr_write(CSR_MCCR2, 0xe249000b);
+			csr_write(CSR_MXSTATUS, 0x638000);
+			csr_write(CSR_MHINT, 0x1ee30c);
+			csr_write(CSR_MHCR, 0x11ff);
+			csr_write(CSR_MHINT2,0x180);
+		} else {
+			while(1);
+		}
+		break;
+
 	case 0x2:
 		if (cpu_ver >= 0x0) {
 			csr_write(CSR_MSMPR, 0x1);
@@ -173,7 +186,7 @@ void setup_features(void)
 				csr_write(CSR_MHINT, 0x21aa10c);
 				csr_write(CSR_MHCR, 0x10011ff);
 #if __riscv_xlen == 64
-				csr_write(CSR_MENVCFG, 0x4000000000000000);
+			csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
 			} else if (cpu_ver >= 0x1003 && cpu_ver <= 0x100b) { //1.0.3~1.0.11
 
@@ -183,7 +196,7 @@ void setup_features(void)
 				csr_write(CSR_MHINT, 0x1aa10c);
 				csr_write(CSR_MHCR, 0x10011ff);
 #if __riscv_xlen == 64
-				csr_write(CSR_MENVCFG, 0x4000000000000000);
+			csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
 			} else if (cpu_ver >= 0x100c && cpu_ver <= 0x1fff) { //1.0.12~
 				csr_write(CSR_MSMPR, 0x1);
@@ -193,7 +206,7 @@ void setup_features(void)
 				csr_write(CSR_MHCR, 0x10011ff);
 				csr_write(CSR_MHINT4, 0x10000080);
 #if __riscv_xlen == 64
-				csr_write(CSR_MENVCFG, 0x4000000000000000);
+			csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
 			} else if (cpu_ver >= 0x2000 && cpu_ver <= 0xffff) { //2.0.0~
 				csr_write(CSR_MSMPR, 0x1);
@@ -203,12 +216,12 @@ void setup_features(void)
 				csr_write(CSR_MHCR, 0x10011ff);
 				csr_write(CSR_MHINT4, 0x10000080);
 #if __riscv_xlen == 64
-				csr_write(CSR_MENVCFG, 0x4000000000000000);
+			csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
 			} else {
-				while(1);
+			while(1);
 			}
-		} else if (cpu_tnmodel == 1) {
+		} else if(cpu_tnmodel == 1) {
 			if (cpu_ver >= 0x0) {
 				csr_write(CSR_MSMPR, 0x1);
 				csr_write(CSR_MCCR2, 0xA0420002);
@@ -217,10 +230,10 @@ void setup_features(void)
 				csr_write(CSR_MHCR, 0x10011FF);
 				csr_write(CSR_MHINT4, 0x10000080);
 #if __riscv_xlen == 64
-				csr_write(CSR_MENVCFG, 0x4000000000000000);
+			csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
 			} else {
-				while(1);
+			while(1);
 			}
 		} else {
 			while(1);

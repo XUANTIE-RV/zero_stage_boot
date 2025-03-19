@@ -195,7 +195,7 @@ void setup_features(void)
 				csr_write(CSR_MHINT, 0x1aa10c);
 				csr_write(CSR_MHCR, 0x10011ff);
 #if __riscv_xlen == 64
-			csr_write(CSR_MENVCFG, 0x4000000000000000);
+				csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
 			} else if (cpu_ver >= 0x100c && cpu_ver <= 0x1fff) { //1.0.12~
 				csr_write(CSR_MSMPR, 0x1);
@@ -220,7 +220,7 @@ void setup_features(void)
 			} else {
 				while(1);
 			}
-		} else if(cpu_tnmodel == 1) {
+		} else if (cpu_tnmodel == 1) {
 			if (cpu_ver >= 0x0) {
 				csr_write(CSR_MSMPR, 0x1);
 				csr_write(CSR_MCCR2, 0xA0420002);

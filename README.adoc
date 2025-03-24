@@ -314,6 +314,8 @@ set *(unsigned long *)($dyninfo_addr + 40) = 0
 # set *(unsigned int *)$flag_addr = 0x1
 # This flag.BIT[1] makes zsb enable COPINSTEE by setting mxstatus.[24]=1 && mxstatus.[22]=0
 # set *(unsigned int *)$flag_addr = 0x2
+# This flag.BIT[1] makes zsb enable XTINSTEE by setting mxstatus.[22]=1
+# set *(unsigned int *)$flag_addr = 0x4
 set *(unsigned int *)$flag_addr = 0x0
 
 # Set fast memory base reg for c908x

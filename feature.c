@@ -19,7 +19,7 @@ static inline void setup_boot_flag(void)
 		csr_clear(CSR_MXSTATUS, 1ULL << 22);
 	}
 	if (boot_flag & FLAG_XTINSTEE) {
-        csr_set(CSR_MXSTATUS, 1ULL<<22);
+		csr_set(CSR_MXSTATUS, 1ULL << 22);
     }
 #endif
 }

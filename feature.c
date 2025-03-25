@@ -3,6 +3,7 @@
 
 #define FLAG_RV64XT32	0x1
 #define FLAG_COPINSTEE	0x2
+#define FLAG_XTINSTEE	0x4
 
 extern unsigned long _load_start;
 
@@ -17,6 +18,8 @@ static inline void setup_boot_flag(void)
 		csr_set(CSR_MXSTATUS, 1ULL << 24);
 		csr_clear(CSR_MXSTATUS, 1ULL << 22);
 	}
+	if (boot_flag & FLAG_XTINSTEE)
+		csr_set(CSR_MXSTATUS, 1ULL << 22);
 #endif
 }
 

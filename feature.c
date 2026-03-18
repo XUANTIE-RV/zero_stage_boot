@@ -25,15 +25,19 @@ static inline void setup_boot_flag(void)
 
 void setup_features(void)
 {
-	unsigned int i, cpu_type, cpu_ver, cpu_tnmodel;
-	unsigned long version[8];
+	unsigned int i, idx, cpu_type = 0, cpu_ver = 0xFFFF, cpu_tnmodel = 0xFFFF;
+	volatile unsigned long version = 0;
 
-	for (i = 0; i < 8; i++)
-		version[i] = csr_read(CSR_MCPUID);
-
-	cpu_type	= (version[0] >> 18) & 0xf;
-	cpu_tnmodel	= (version[0] >> 14) & 0x1;
-	cpu_ver		= (version[1] >> 12) & 0xffff;
+	for (i = 8; i != 0; i--) {
+		version = csr_read(CSR_MCPUID);
+		idx = (version >> 28) & 0xf;
+		if (idx == 0) {
+			cpu_type = (version >> 18) & 0xf;
+			cpu_tnmodel = (version >> 14) & 0x1;
+		} else if (idx == 1) {
+			cpu_ver = (version >> 12) & 0xffff;
+		}
+	}
 
 	/*
 	 * Warning: CSR_MCCR2 contains an L2 cache latency setting,

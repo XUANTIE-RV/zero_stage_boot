@@ -28,7 +28,7 @@ void setup_features(void)
 	unsigned int i, idx, cpu_type = 0, cpu_ver = 0xFFFF, cpu_tnmodel = 0xFFFF;
 	volatile unsigned long version = 0;
 
-	for (i = 8; i != 0; i--) {
+	for (i = 7; i != 0; i--) {
 		version = csr_read(CSR_MCPUID);
 		idx = (version >> 28) & 0xf;
 		if (idx == 0) {
@@ -36,6 +36,9 @@ void setup_features(void)
 			cpu_tnmodel = (version >> 14) & 0x1;
 		} else if (idx == 1) {
 			cpu_ver = (version >> 12) & 0xffff;
+		}
+		if (cpu_ver != 0xFFFF && cpu_tnmodel != 0xFFFF) {
+			break;
 		}
 	}
 

@@ -15,6 +15,7 @@
 #define CSR_MCOUNTERWEN  0x7c9
 #define CSR_MSMPR	 0x7f3
 #define CSR_MNASTATUS   0x8000000000000210
+#define CSR_L2_TRA_CTRL 0x8000000000001600
 
 /* clang-format off */
 #define MSTATUS_SIE			_UL(0x00000002)
@@ -251,6 +252,7 @@
 #define CSR_MTVAL2			0x34b
 #define CSR_MISELECT    	0x350
 #define CSR_MIREG       	0x351
+#define CSR_MIREG2			0x352
 #define CSR_PMPCFG0			0x3a0
 #define CSR_PMPCFG1			0x3a1
 #define CSR_PMPCFG2			0x3a2

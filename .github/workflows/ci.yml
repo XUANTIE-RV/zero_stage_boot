@@ -2,6 +2,10 @@ name: ci-build
 
 on:
   push:
+    tags:
+      - '**'
+  release:
+    types: [published]
   pull_request:
   workflow_dispatch:
   schedule:

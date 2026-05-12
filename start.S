@@ -1,11 +1,14 @@
 #include "riscv_asm.h"
 #include "riscv_encoding.h"
 
+.global _start
+.type _start, @function
+
 .global _load_start
 
 #define BOOT_STATUS_RELOCATE_DONE	1
 
-entry:
+_start:
 	/*
 	 * Clear L1 cache & BTB & BHT ...
 	 */
@@ -31,7 +34,7 @@ entry:
 	 */
 	lla	t0, _load_start
 	REG_L  t2, 0(t0)
-	lla	t1, entry
+	lla	t1, _start
 	REG_S	t1, 0(t0)
 
 	/*

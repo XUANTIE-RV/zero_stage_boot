@@ -7,6 +7,10 @@ SECTIONS
 		*(.text)
 		PROVIDE(_text_end = .);
 	}
+	.rodata : {
+		*(.rodata)
+		*(.rodata.*)
+	}
 	. = ALIGN(8);
 	.data : {
 		PROVIDE(_data_start = .);

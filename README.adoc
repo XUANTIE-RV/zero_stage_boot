@@ -542,3 +542,7 @@ set *($l3prxcr) = 0x0
 # set $l3decr = $stl3_base + 0x300
 # set *($l3decr) = 0x0
 ....
+
+= Appendix E - Related Resources
+
+- XuanTie RISC-V development resources and tools: [XuanTie Resource Center](https://www.xrvm.cn/community/download)

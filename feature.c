@@ -177,6 +177,16 @@ void setup_features(void)
 #if __riscv_xlen == 64
 			csr_write(CSR_MENVCFG, 0x4000000000000000);
 #endif
+		} else if (cpu_ver >= 0x5000 && cpu_ver <= 0x5fff) { //5.0.0~5.x.x
+			csr_write(CSR_MSMPR, 0x1);
+			csr_write(CSR_MCCR2, 0xe24a000a);
+			csr_write(CSR_MXSTATUS, 0xc0c38000);
+			csr_write(CSR_MHINT, 0x31ea12c);
+			csr_write(CSR_MHINT2, 0x180);
+			csr_write(CSR_MHCR, 0x11ff);
+#if __riscv_xlen == 64
+			csr_write(CSR_MENVCFG, 0x4000000000000000);
+#endif
 		} else {
 			while(1);
 		}
